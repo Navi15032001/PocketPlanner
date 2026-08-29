@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketPlanner - Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">💳</div>
+            <div class="sidebar-brand-text">Pocket<span>Planner</span></div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <a href="dashboard.html" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section-title">Finance</div>
+            <a href="income.html" class="nav-item">
+                <span class="nav-icon">💵</span>
+                <span>Income</span>
+            </a>
+            <a href="expenses.html" class="nav-item">
+                <span class="nav-icon">💸</span>
+                <span>Expenses</span>
+            </a>
+            <a href="budgets.html" class="nav-item">
+                <span class="nav-icon">🎯</span>
+                <span>Budgets</span>
+            </a>
+
+            <div class="nav-section-title">Planning</div>
+            <a href="goals.html" class="nav-item">
+                <span class="nav-icon">⭐</span>
+                <span>Goals</span>
+            </a>
+            <a href="savings.html" class="nav-item">
+                <span class="nav-icon">🏦</span>
+                <span>Savings</span>
+            </a>
+            <a href="calender.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Calendar</span>
+            </a>
+
+            <div class="nav-section-title">Analytics & Settings</div>
+            <a href="reports.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>Reports</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <span class="nav-icon">🏷️</span>
+                <span>Categories</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+
+            <!-- PWA Install Button (Dynamic) -->
+            <div class="p-2 mt-3">
+                <button id="pwaInstallBtn" class="btn-theme btn-primary-theme w-100 py-2" style="display: none; font-size: 13px; gap: 6px;">
+                    📲 Install Mobile App
+                </button>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUsername">Loading...</div>
+                    <div class="user-role">Personal Account</div>
+                </div>
+                <button class="btn-icon" onclick="logout()" title="Logout" style="width:32px;height:32px;">🚪</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN APP CONTENT -->
+    <main class="app-main">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <h1 id="greetingText">Welcome back! 👋</h1>
+                <p class="topbar-subtitle">Here is your real-time financial health summary.</p>
+            </div>
+            <div class="topbar-right">
+                <a href="expenses.html" class="btn-theme btn-primary-theme btn-sm-theme">+ Add Expense</a>
+                <button class="btn-icon" onclick="logout()" title="Logout">🚪</button>
+            </div>
+        </header>
+
+        <div class="app-content">
+
+            <!-- KPI METRIC CARDS -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title">Available Cash</span>
+                        <div class="kpi-icon-badge badge-emerald">💰</div>
+                    </div>
+                    <div class="kpi-value" id="availableMoney">₹0</div>
+                    <div class="kpi-footer">
+                        <span>Free unreserved balance</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title">Current Balance</span>
+                        <div class="kpi-icon-badge badge-indigo">💳</div>
+                    </div>
+                    <div class="kpi-value" id="monthlyIncome">₹0</div>
+                    <div class="kpi-footer">
+                        <span>Opening + Income - Expenses</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title">Month Expenses</span>
+                        <div class="kpi-icon-badge badge-rose">🧾</div>
+                    </div>
+                    <div class="kpi-value" id="totalExpenses">₹0</div>
+                    <div class="kpi-footer">
+                        <span>Current month spending</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-card-header">
+                        <span class="kpi-title">Total Reserved</span>
+                        <div class="kpi-icon-badge badge-purple">🎯</div>
+                    </div>
+                    <div class="kpi-value" id="reservedAmount">₹0</div>
+                    <div class="kpi-footer">
+                        <span>Budgets + Savings goals</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK EXPENSE FAST-LOG WIDGET -->
+            <div class="surface-card p-3 mb-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="font-size: 18px;">⚡</span>
+                        <span class="fw-bold" style="font-size: 14.5px; color: var(--text-main);">Quick Log Expense</span>
+                        <span class="pill-badge badge-indigo" style="font-size: 11px;">1-Tap Entry</span>
+                    </div>
+                    <!-- Quick Presets -->
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(50, 'Chai / Coffee', 'Food')" style="font-size: 12px; padding: 4px 10px;">
+                            ☕ ₹50 Chai
+                        </button>
+                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(200, 'Meal / Food', 'Food')" style="font-size: 12px; padding: 4px 10px;">
+                            🍔 ₹200 Food
+                        </button>
+                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(500, 'Petrol / Fuel', 'Transport')" style="font-size: 12px; padding: 4px 10px;">
+                            ⛽ ₹500 Fuel
+                        </button>
+                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(1000, 'Groceries', 'Groceries')" style="font-size: 12px; padding: 4px 10px;">
+                            🛒 ₹1k Grocery
+                        </button>
+                    </div>
+                </div>
+
+                <form id="quickLogForm" class="d-flex flex-wrap gap-2 align-items-center">
+                    <div style="flex: 1 1 120px; min-width: 110px;">
+                        <input type="number" id="quickAmount" class="form-control-theme" placeholder="₹ Amount" step="0.01" min="1" required style="padding: 7px 12px; font-size: 13.5px;">
+                    </div>
+                    <div style="flex: 2 1 180px; min-width: 140px;">
+                        <input type="text" id="quickDesc" class="form-control-theme" placeholder="What was this for? (e.g. Snacks)" style="padding: 7px 12px; font-size: 13.5px;">
+                    </div>
+                    <div style="flex: 1.5 1 140px; min-width: 120px;">
+                        <select id="quickCategorySelect" class="form-control-theme" style="padding: 7px 12px; font-size: 13.5px;">
+                            <option value="">Category (Optional)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-theme btn-primary-theme btn-sm-theme py-2" style="white-space: nowrap; font-size: 13.5px;">
+                            ⚡ Fast Log
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ROW 2: SPENDING BY CATEGORY & FINANCIAL HEALTH -->
+            <div class="dashboard-grid-2">
+                <div class="surface-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0;">Spending by Category</h3>
+                            <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Where your funds were allocated</p>
+                        </div>
+                        <a href="reports.html" class="btn-theme btn-secondary-theme btn-sm-theme">Analytics →</a>
+                    </div>
+                    <div style="height: 230px; position: relative;">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="surface-card d-flex flex-column justify-content-between">
+                    <div>
+                        <h3 style="font-size: 16px; margin: 0;">Financial Health Snapshot</h3>
+                        <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Calculated on liquidity & budget ratios</p>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3 my-3 p-3" style="background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <div id="healthFace" style="font-size: 38px; line-height: 1;">😊</div>
+                        <div style="flex-grow: 1;">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold" id="financialHealth" style="font-size: 15px;">Loading...</span>
+                                <span class="pill-badge badge-emerald" id="smartScoreText">Score: -</span>
+                            </div>
+                            <p id="healthText" class="text-muted mb-2" style="font-size: 12px;">Analyzing balance...</p>
+                            <div style="height: 6px; background: var(--border); border-radius: 99px; overflow: hidden;">
+                                <div id="healthProgress" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--success)); transition: width 0.6s ease;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-2 border-top" style="font-size: 13px;">
+                        <span class="text-muted">Active Budgets: <strong id="budgetCount" class="text-main">0</strong></span>
+                        <span class="text-muted">Total Expenses Logged: <strong id="expenseCount" class="text-main">0</strong></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 3: SMART INSIGHTS & CASH FLOW FORECAST -->
+            <div class="dashboard-grid-2 mt-4">
+                <div class="surface-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0;">Smart Financial Insights</h3>
+                            <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Automated recommendations based on balance</p>
+                        </div>
+                    </div>
+                    <div id="smartSuggestions" class="d-flex flex-column gap-2">
+                        <div class="text-muted p-2" style="font-size: 13px;">Analyzing spending patterns...</div>
+                    </div>
+                </div>
+
+                <div class="surface-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0;">Month-End Outflow Forecast</h3>
+                            <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Projected run-rate based on daily average</p>
+                        </div>
+                        <span class="pill-badge badge-amber">Projection</span>
+                    </div>
+                    <p id="forecastText" class="fw-bold" style="font-size: 15px; color: var(--text-main); line-height: 1.5;">
+                        Calculating forecast projection...
+                    </p>
+                    <div class="mt-3 p-3" style="background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border); font-size: 12.5px; color: var(--text-muted);">
+                        💡 Pro-tip: Keep your daily burn below available cash to ensure budget safety.
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 4: RECENT TRANSACTIONS & CASH FLOW TREND -->
+            <div class="dashboard-grid-2 mt-4">
+                <div class="surface-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0;">Recent Transactions</h3>
+                            <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Latest cash outflow entries</p>
+                        </div>
+                        <a href="expenses.html" class="btn-theme btn-secondary-theme btn-sm-theme">View All →</a>
+                    </div>
+                    <div id="recentTransactions" class="d-flex flex-column">
+                        <div class="text-muted p-3 text-center" style="font-size: 13px;">Loading transactions...</div>
+                    </div>
+                </div>
+
+                <div class="surface-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h3 style="font-size: 16px; margin: 0;">Income vs Expense Trend</h3>
+                            <p class="text-muted" style="font-size: 12.5px; margin: 2px 0 0;">Monthly cash flow trajectory</p>
+                        </div>
+                        <a href="reports.html" class="btn-theme btn-secondary-theme btn-sm-theme">Full Report →</a>
+                    </div>
+                    <div style="height: 230px; position: relative;">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

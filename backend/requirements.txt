@@ -1,0 +1,16 @@
+asgiref==3.12.1
+Django==6.0.8
+django-cors-headers==4.9.0
+djangorestframework==3.17.2
+mysqlclient==2.2.8
+pymysql==1.1.1
+cryptography==44.0.1
+pillow==12.3.0
+python-dotenv==1.2.2
+sqlparse==0.5.5
+tzdata==2026.3
+djangorestframework-simplejwt==5.5.1
+python-dateutil==2.9.0.post0
+reportlab==4.2.2
+gunicorn==23.0.0
+whitenoise==6.9.0

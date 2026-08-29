@@ -1,0 +1,58 @@
+/* PocketPlanner Funky Dashboard UI */
+:root{--bg:#f8f6ff;--text:#243047;--muted:#718096;--purple:#8b5cf6;--mint:#d8f5dc;--lav:#e2d6ff;--coral:#ffd8d0;--sky:#d4e1ff;--shadow:0 10px 28px rgba(71,58,112,.10)}
+*{box-sizing:border-box}
+body.pp-dashboard{margin:0;background:radial-gradient(circle at 85% 8%,rgba(255,226,160,.3),transparent 18%),radial-gradient(circle at 15% 90%,rgba(190,225,255,.3),transparent 20%),var(--bg);color:var(--text);font-family:"Trebuchet MS","Segoe UI",Arial,sans-serif}
+.pp-shell{min-height:100vh;display:flex}
+.pp-sidebar{width:235px;min-height:100vh;padding:20px 14px;background:rgba(255,253,248,.94);border-right:1px solid rgba(70,55,110,.08);position:sticky;top:0;height:100vh;overflow-y:auto}
+.pp-brand{display:flex;align-items:center;gap:10px;padding:8px 10px 18px;font-weight:900;font-size:20px}
+.pp-brand-bubble{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,#c9f1df,#d8cbff);box-shadow:0 5px 12px rgba(92,67,150,.13);font-size:23px}
+.pp-nav-title{margin:10px 12px 7px;color:#a0a8b8;font-size:10px;font-weight:900;letter-spacing:1.2px}
+.pp-nav{display:flex;flex-direction:column;gap:6px}
+.pp-nav a{text-decoration:none;color:#536078;border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;font-weight:700;transition:.18s}
+.pp-nav a:hover{background:#f0eaff;color:#6d3fe8;transform:translateX(2px)}
+.pp-nav a.active{color:#fff;background:linear-gradient(135deg,#9870f7,#7d51e9);box-shadow:0 8px 18px rgba(125,81,233,.22)}
+.pp-nav-icon{width:28px;text-align:center;font-size:19px}
+.pp-main{flex:1;padding:28px clamp(18px,3vw,44px);min-width:0}
+.pp-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:22px}
+.pp-greeting{margin:0;font-size:clamp(28px,3vw,38px);line-height:1.1;font-weight:950;letter-spacing:-.7px}
+.pp-subgreeting{margin:7px 0 0;color:var(--muted);font-size:14px;font-weight:600}
+.pp-top-actions{display:flex;align-items:center;gap:10px}
+.pp-month{border:1px solid rgba(70,55,110,.08);border-radius:13px;padding:10px 13px;background:white;color:#58657c;font-weight:700}
+.pp-icon-button{width:42px;height:42px;border:1px solid rgba(70,55,110,.08);border-radius:13px;background:white;display:grid;place-items:center;cursor:pointer}
+.pp-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#e8ddff;font-size:21px}
+.pp-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
+.pp-card{position:relative;overflow:hidden;min-height:142px;padding:18px;border:1px solid rgba(255,255,255,.8);border-radius:21px;box-shadow:var(--shadow)}
+.pp-card::after{content:"";position:absolute;width:85px;height:85px;border-radius:50%;right:-26px;bottom:-32px;background:rgba(255,255,255,.27)}
+.pp-card-mint{background:linear-gradient(135deg,var(--mint),#c5edc9)}
+.pp-card-lavender{background:linear-gradient(135deg,var(--lav),#d1c0ff)}
+.pp-card-coral{background:linear-gradient(135deg,var(--coral),#ffc5bd)}
+.pp-card-sky{background:linear-gradient(135deg,var(--sky),#c3d1ff)}
+.pp-card-icon{display:block;font-size:27px;margin-bottom:5px}
+.pp-card-label{margin:0;font-size:13px;font-weight:800;color:#596579}
+.pp-card-value{margin:3px 0 0;font-size:27px;font-weight:950;color:#263247}
+.pp-card-note{margin:2px 0 0;font-size:11px;font-weight:700;color:#68758a}
+.pp-grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-bottom:14px}
+.pp-panel{background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.9);border-radius:21px;padding:18px;box-shadow:var(--shadow)}
+.pp-panel-title{margin:0;font-size:16px;font-weight:950}
+.pp-panel-subtitle{margin:4px 0 14px;color:var(--muted);font-size:11px;font-weight:650}
+.pp-health{display:flex;align-items:center;gap:18px;min-height:180px}
+.pp-health-face{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:#ffe98d;border:5px solid #fff5be;box-shadow:inset 0 -5px 0 rgba(0,0,0,.05);font-size:51px}
+.pp-health-score{font-size:28px;font-weight:950;margin:0}
+.pp-health-text{margin:2px 0 12px;color:var(--muted);font-size:12px;font-weight:700}
+.pp-progress{height:11px;border-radius:20px;background:#ececf0;overflow:hidden}
+.pp-progress>span{display:block;height:100%;width:75%;border-radius:inherit;background:linear-gradient(90deg,#46b97a,#70d69b)}
+.pp-transactions{list-style:none;padding:0;margin:0}
+.pp-transaction{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px dashed #e7e4ed}
+.pp-transaction:last-child{border-bottom:0}
+.pp-transaction-left{display:flex;align-items:center;gap:10px;min-width:0}
+.pp-transaction-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:#f1edff}
+.pp-transaction-name{font-size:12px;font-weight:850}
+.pp-transaction-date{color:#9aa1af;font-size:10px}
+.pp-transaction-amount{font-size:12px;font-weight:950;white-space:nowrap}
+.pp-character{text-align:center;padding:8px 4px 0;font-size:58px}
+.pp-character-bubble{display:inline-block;background:#fff;border:1px solid rgba(70,55,110,.08);border-radius:16px;padding:8px 12px;font-size:11px;font-weight:800;box-shadow:0 6px 16px rgba(60,50,90,.08)}
+.pp-btn{border:0;border-radius:12px;padding:9px 14px;font-weight:850;cursor:pointer}
+.pp-btn-primary{background:var(--purple);color:white}
+@media(max-width:1050px){.pp-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pp-grid-2{grid-template-columns:1fr}}
+@media(max-width:760px){.pp-shell{display:block}.pp-sidebar{width:100%;height:auto;min-height:0;position:relative;padding:10px}.pp-brand{padding-bottom:10px}.pp-nav-title{display:none}.pp-nav{flex-direction:row;overflow-x:auto;padding-bottom:3px}.pp-nav a{flex:0 0 auto}.pp-nav a span:last-child{display:none}.pp-main{padding:18px 12px 28px}.pp-topbar{flex-direction:column}.pp-top-actions{width:100%}.pp-month{flex:1}}
+@media(max-width:520px){.pp-summary-grid{grid-template-columns:1fr}.pp-card{min-height:120px}.pp-health{align-items:flex-start;flex-direction:column}}

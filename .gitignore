@@ -1,0 +1,14 @@
+venv/
+backend/venv/
+.env
+backend/.env
+*.env
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+backend/staticfiles/
+scratch/
+.system_generated/

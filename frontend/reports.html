@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketPlanner - Reports & Analytics</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">💳</div>
+            <div class="sidebar-brand-text">Pocket<span>Planner</span></div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section-title">Finance</div>
+            <a href="income.html" class="nav-item">
+                <span class="nav-icon">💵</span>
+                <span>Income</span>
+            </a>
+            <a href="expenses.html" class="nav-item">
+                <span class="nav-icon">💸</span>
+                <span>Expenses</span>
+            </a>
+            <a href="budgets.html" class="nav-item">
+                <span class="nav-icon">🎯</span>
+                <span>Budgets</span>
+            </a>
+
+            <div class="nav-section-title">Planning</div>
+            <a href="goals.html" class="nav-item">
+                <span class="nav-icon">⭐</span>
+                <span>Goals</span>
+            </a>
+            <a href="savings.html" class="nav-item">
+                <span class="nav-icon">🏦</span>
+                <span>Savings</span>
+            </a>
+            <a href="calender.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Calendar</span>
+            </a>
+
+            <div class="nav-section-title">Analytics & Settings</div>
+            <a href="reports.html" class="nav-item active">
+                <span class="nav-icon">📈</span>
+                <span>Reports</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <span class="nav-icon">🏷️</span>
+                <span>Categories</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUsername">Loading...</div>
+                    <div class="user-role">Personal Account</div>
+                </div>
+                <button class="btn-icon" onclick="logout()" title="Logout" style="width:32px;height:32px;">🚪</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN APP CONTENT -->
+    <main class="app-main">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <h2>Reports & Financial Analytics</h2>
+                <p class="topbar-subtitle">In-depth breakdown of spending, savings velocity, and export reports.</p>
+            </div>
+            <div class="topbar-right">
+                <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="exportExpensesCSV()">
+                    📄 Expenses CSV
+                </button>
+                <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="exportIncomeCSV()">
+                    📄 Income CSV
+                </button>
+                <button class="btn-theme btn-primary-theme btn-sm-theme" onclick="exportMonthlyPDF()">
+                    📥 Export PDF Report
+                </button>
+            </div>
+        </header>
+
+        <div class="app-content">
+
+            <!-- CHARTS ROW -->
+            <div class="dashboard-grid-2 mb-4">
+                <div class="surface-card">
+                    <h3 style="font-size: 16px; margin: 0 0 4px;">Expenses by Category</h3>
+                    <p class="text-muted" style="font-size: 12.5px; margin-bottom: 16px;">Historical category distribution</p>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="surface-card">
+                    <h3 style="font-size: 16px; margin: 0 0 4px;">Monthly Outflow Trend</h3>
+                    <p class="text-muted" style="font-size: 12.5px; margin-bottom: 16px;">Total expenses over time</p>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUMMARY & BUDGET ALLOCATION -->
+            <div class="dashboard-grid-2">
+                <div class="surface-card d-flex flex-column justify-content-between">
+                    <div>
+                        <h3 style="font-size: 16px; margin: 0 0 4px;">Savings Performance</h3>
+                        <p class="text-muted" style="font-size: 12.5px; margin-bottom: 20px;">Cumulative wealth accumulation</p>
+
+                        <div class="p-4 text-center" style="background: var(--bg-body); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                            <div class="text-muted" style="font-size: 13px; font-weight: 600; text-transform: uppercase;">Total Saved in Goals</div>
+                            <div id="totalSavings" style="font-size: 36px; font-weight: 800; color: var(--primary); margin: 8px 0;">₹0</div>
+                            <span class="pill-badge badge-emerald">On Track</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top d-flex gap-2">
+                        <a href="goals.html" class="btn-theme btn-secondary-theme btn-sm-theme flex-fill text-center">Manage Goals</a>
+                        <a href="savings.html" class="btn-theme btn-secondary-theme btn-sm-theme flex-fill text-center">View Ledger</a>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h3 style="font-size: 16px; margin: 0;">Budget Allocations</h3>
+                        <span class="text-muted" style="font-size: 12.5px;">Current targets</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Budget Name</th>
+                                    <th>Allocated</th>
+                                    <th style="text-align: right;">Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budgetReportBody">
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted p-4">Loading allocations...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/reports.js"></script>
+</body>
+</html>

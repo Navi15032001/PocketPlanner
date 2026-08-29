@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketPlanner - Profile</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">💳</div>
+            <div class="sidebar-brand-text">Pocket<span>Planner</span></div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-section-title">Overview</div>
+            <a href="dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+            <div class="nav-section-title">Finance</div>
+            <a href="income.html" class="nav-item">
+                <span class="nav-icon">💵</span>
+                <span>Income</span>
+            </a>
+            <a href="expenses.html" class="nav-item">
+                <span class="nav-icon">💸</span>
+                <span>Expenses</span>
+            </a>
+            <a href="budgets.html" class="nav-item">
+                <span class="nav-icon">🎯</span>
+                <span>Budgets</span>
+            </a>
+
+            <div class="nav-section-title">Planning</div>
+            <a href="goals.html" class="nav-item">
+                <span class="nav-icon">⭐</span>
+                <span>Goals</span>
+            </a>
+            <a href="savings.html" class="nav-item">
+                <span class="nav-icon">🏦</span>
+                <span>Savings</span>
+            </a>
+            <a href="calender.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Calendar</span>
+            </a>
+
+            <div class="nav-section-title">Analytics & Settings</div>
+            <a href="reports.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>Reports</span>
+            </a>
+            <a href="categories.html" class="nav-item">
+                <span class="nav-icon">🏷️</span>
+                <span>Categories</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+            <a href="settings.html" class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <div class="user-avatar" id="sidebarAvatar">U</div>
+                <div class="user-info">
+                    <div class="user-name" id="sidebarUsername">Loading...</div>
+                    <div class="user-role">Personal Account</div>
+                </div>
+                <button class="btn-icon" onclick="logout()" title="Logout" style="width:32px;height:32px;">🚪</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN APP CONTENT -->
+    <main class="app-main">
+        <header class="app-topbar">
+            <div class="topbar-left">
+                <h2>Account Profile</h2>
+                <p class="topbar-subtitle">Overview of your account credentials and personal preferences.</p>
+            </div>
+            <div class="topbar-right">
+                <a href="settings.html" class="btn-theme btn-primary-theme btn-sm-theme">⚙️ Edit in Settings</a>
+            </div>
+        </header>
+
+        <div class="app-content" style="max-width: 800px;">
+
+            <div class="surface-card mb-4">
+                <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+                    <div class="user-avatar" style="width: 72px; height: 72px; font-size: 28px;" id="avatarInitial">
+                        ?
+                    </div>
+                    <div>
+                        <h3 id="profileFullName" style="font-size: 22px; margin: 0 0 4px;">Loading...</h3>
+                        <div class="text-muted" id="profileMemberSince" style="font-size: 13px;">Member</div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">Username</div>
+                        <div class="fw-bold mt-1" id="profileUsername" style="font-size: 15px;">—</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">Email Address</div>
+                        <div class="fw-bold mt-1" id="profileEmail" style="font-size: 15px;">—</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">Starting Balance</div>
+                        <div class="fw-bold mt-1" id="profileIncome" style="font-size: 15px; color: var(--primary);">₹0</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">Base Currency</div>
+                        <div class="fw-bold mt-1" id="profileCurrency" style="font-size: 15px;">INR</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">Interface Language</div>
+                        <div class="fw-bold mt-1" id="profileLanguage" style="font-size: 15px;">English</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="text-muted" style="font-size: 12px; font-weight: 700; text-transform: uppercase;">App Theme</div>
+                        <div class="fw-bold mt-1" id="profileTheme" style="font-size: 15px;">Light</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/profile.js"></script>
+</body>
+</html>
