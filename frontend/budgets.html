@@ -196,7 +196,7 @@
     <main class="app-main">
         <header class="app-topbar">
             <div class="topbar-left">
-                <h2>Budget Matrix & Attendance Sheet</h2>
+                <h2>Daily Budget & Expense Matrix</h2>
                 <p class="topbar-subtitle">Track day-to-day spending or skip days to instantly free up unreserved cash.</p>
             </div>
             <div class="topbar-right">
@@ -222,10 +222,10 @@
 
                 <div class="d-flex align-items-center gap-2">
                     <button id="viewMatrixBtn" class="view-tab-btn active" onclick="switchView('matrix')">
-                        📋 Attendance Matrix
+                        📅 Daily Expense Grid
                     </button>
                     <button id="viewListBtn" class="view-tab-btn" onclick="switchView('list')">
-                        📊 List / Envelopes
+                        📊 Envelopes List
                     </button>
                 </div>
             </div>
@@ -334,7 +334,7 @@
                         <div class="col-md-6 form-group">
                             <label class="form-label">Budget Period</label>
                             <select id="period" class="form-select-theme" required>
-                                <option value="DAILY" selected>⚡ Daily (Attendance Sheet)</option>
+                                <option value="DAILY" selected>⚡ Daily (Day-by-Day Grid)</option>
                                 <option value="MONTHLY">📅 Monthly (Full Envelope)</option>
                                 <option value="WEEKLY">🗓️ Weekly</option>
                             </select>
