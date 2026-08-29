@@ -1,5 +1,21 @@
 from rest_framework import serializers
-from .models import Budget
+from .models import Budget, BudgetDailyLog
+
+
+class BudgetDailyLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BudgetDailyLog
+        fields = [
+            'id',
+            'budget',
+            'date',
+            'status',
+            'amount',
+            'expense',
+            'note',
+            'created_at',
+            'updated_at'
+        ]
 
 
 class BudgetSerializer(serializers.ModelSerializer):

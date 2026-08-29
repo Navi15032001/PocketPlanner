@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from accounts.models import UserProfile
-from budgets.models import Budget
+from budgets.models import Budget, BudgetDailyLog
 from expenses.models import Expense
 
 
@@ -65,7 +65,6 @@ class BudgetLogicTestCase(APITestCase):
         self.assertEqual(b3.allocated_amount, Decimal('100.00'))
 
     def test_1_tap_spend_from_budget_drawdown(self):
-        # Create a Daily Chai Budget with allocated ₹100
         budget = Budget.objects.create(
             user=self.user,
             name="Daily Chai & Snacks",
@@ -75,7 +74,6 @@ class BudgetLogicTestCase(APITestCase):
             period="DAILY"
         )
 
-        # Spend ₹40 from budget
         response = self.client.post(f'/api/budgets/{budget.id}/spend/', {
             'amount': '40.00',
             'description': 'Morning Masala Chai'
@@ -84,11 +82,63 @@ class BudgetLogicTestCase(APITestCase):
         self.assertEqual(Decimal(str(response.data['amount_spent'])), Decimal('40.00'))
         self.assertEqual(Decimal(str(response.data['remaining_allocated'])), Decimal('60.00'))
 
-        # Verify expense was created
         expense = Expense.objects.filter(user=self.user, description='Morning Masala Chai').first()
         self.assertIsNotNone(expense)
         self.assertEqual(expense.amount, Decimal('40.00'))
 
-        # Verify budget was deducted
         budget.refresh_from_db()
         self.assertEqual(budget.allocated_amount, Decimal('60.00'))
+
+    def test_budget_matrix_and_cell_toggle(self):
+        daily_b = Budget.objects.create(
+            user=self.user,
+            name="Metro Travel",
+            target_amount=Decimal("80.00"),
+            allocated_amount=Decimal("80.00"),
+            priority="HIGH",
+            period="DAILY"
+        )
+        monthly_b = Budget.objects.create(
+            user=self.user,
+            name="House Rent",
+            target_amount=Decimal("12000.00"),
+            allocated_amount=Decimal("12000.00"),
+            priority="HIGH",
+            period="MONTHLY"
+        )
+
+        # 1. Fetch matrix for August 2026
+        response = self.client.get('/api/budgets/matrix/?year=2026&month=8')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['total_days'], 31)
+        self.assertEqual(len(response.data['matrix']), 2)
+
+        # 2. Toggle Day 15 to SPENT
+        toggle_res = self.client.post(f'/api/budgets/{daily_b.id}/cell-toggle/', {
+            'date': '2026-08-15',
+            'status': 'SPENT',
+            'amount': '80.00'
+        })
+        self.assertEqual(toggle_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(toggle_res.data['status'], 'SPENT')
+
+        # Verify expense created
+        exp = Expense.objects.filter(user=self.user, date='2026-08-15').first()
+        self.assertIsNotNone(exp)
+        self.assertEqual(exp.amount, Decimal('80.00'))
+
+        # 3. Toggle Day 16 (Sunday) to SKIPPED
+        skip_res = self.client.post(f'/api/budgets/{daily_b.id}/cell-toggle/', {
+            'date': '2026-08-16',
+            'status': 'SKIPPED'
+        })
+        self.assertEqual(skip_res.status_code, status.HTTP_200_OK)
+        self.assertEqual(skip_res.data['status'], 'SKIPPED')
+
+        # Re-fetch matrix and verify counts
+        matrix_res = self.client.get('/api/budgets/matrix/?year=2026&month=8')
+        daily_row = next(r for r in matrix_res.data['matrix'] if r['id'] == daily_b.id)
+        self.assertEqual(daily_row['spent_days_count'], 1)
+        self.assertEqual(daily_row['skipped_days_count'], 1)
+        self.assertEqual(daily_row['cells']['15']['status'], 'SPENT')
+        self.assertEqual(daily_row['cells']['16']['status'], 'SKIPPED')

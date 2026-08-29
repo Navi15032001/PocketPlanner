@@ -3,10 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PocketPlanner - Budgets</title>
+    <title>PocketPlanner - Budget Attendance Matrix</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/app.css">
+    <style>
+        /* Matrix Attendance Table Styles */
+        .matrix-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12.5px;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .matrix-table th {
+            background: var(--bg-body);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .matrix-sticky-col {
+            position: sticky;
+            left: 0;
+            background: var(--bg-card) !important;
+            z-index: 10;
+            text-align: left !important;
+            min-width: 190px;
+            max-width: 220px;
+            padding: 10px 14px !important;
+            border-right: 2px solid var(--border) !important;
+        }
+        .matrix-table th.matrix-sticky-col {
+            background: var(--bg-body) !important;
+            z-index: 11;
+        }
+        .matrix-cell {
+            width: 38px;
+            min-width: 38px;
+            height: 38px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .matrix-cell:hover {
+            filter: brightness(1.15);
+            transform: scale(1.08);
+            z-index: 5;
+        }
+        .cell-spent {
+            background: rgba(16, 185, 129, 0.18) !important;
+            color: var(--success-text) !important;
+            font-weight: 800;
+        }
+        .cell-skipped {
+            background: rgba(239, 68, 68, 0.12) !important;
+            color: var(--danger-text) !important;
+            font-weight: 800;
+        }
+        .cell-pending {
+            background: var(--bg-card);
+            color: var(--text-dim);
+        }
+        .cell-today {
+            border: 2px solid var(--primary) !important;
+            box-shadow: inset 0 0 6px rgba(79, 70, 229, 0.3);
+        }
+        .cell-weekend {
+            background: rgba(0, 0, 0, 0.03);
+        }
+        .theme-dark .cell-weekend {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .monthly-span-cell {
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.08), rgba(99, 102, 241, 0.03));
+            padding: 12px 18px !important;
+            text-align: left !important;
+        }
+        .view-tab-btn {
+            border-radius: var(--radius-md);
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .view-tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+        }
+    </style>
 </head>
 <body>
 
@@ -89,8 +193,8 @@
     <main class="app-main">
         <header class="app-topbar">
             <div class="topbar-left">
-                <h2>Budget Allocator</h2>
-                <p class="topbar-subtitle">Manage daily & monthly envelopes with 1-tap expense drawdown.</p>
+                <h2>Budget Matrix & Attendance Sheet</h2>
+                <p class="topbar-subtitle">Track day-to-day spending or skip days to instantly free up unreserved cash.</p>
             </div>
             <div class="topbar-right">
                 <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="allocateBudgets()">
@@ -104,33 +208,84 @@
 
         <div class="app-content">
 
-            <div id="allocateMessage" class="mb-4"></div>
-
-            <!-- BUDGET TABLE -->
-            <div class="table-container">
-                <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h3 style="font-size: 16px; margin: 0;">Active Budgets & Envelopes</h3>
-                    <span class="text-muted" style="font-size: 12.5px;">Click <strong>✓ Spend</strong> to log expense and draw down envelope</span>
+            <!-- VIEW CONTROLS & MONTH SELECTOR -->
+            <div class="surface-card p-3 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="changeMonth(-1)">◀ Prev</button>
+                    <h3 id="currentMonthYearLabel" style="font-size: 16px; margin: 0; font-weight: 800; min-width: 140px; text-align: center;">August 2026</h3>
+                    <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="changeMonth(1)">Next ▶</button>
+                    <button class="btn-theme btn-secondary-theme btn-sm-theme ms-2" onclick="goToTodayMonth()">Today</button>
                 </div>
 
-                <div class="table-responsive">
-                    <table class="custom-table">
-                        <thead>
-                            <tr>
-                                <th>Budget Name</th>
-                                <th>Period</th>
-                                <th>Target Cap</th>
-                                <th>Allocated Envelope</th>
-                                <th>Priority</th>
-                                <th style="text-align: right;">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="budgetTableBody">
-                            <tr>
-                                <td colspan="6" class="text-center text-muted p-4">Loading budgets...</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="d-flex align-items-center gap-2">
+                    <button id="viewMatrixBtn" class="view-tab-btn active" onclick="switchView('matrix')">
+                        📋 Attendance Matrix
+                    </button>
+                    <button id="viewListBtn" class="view-tab-btn" onclick="switchView('list')">
+                        📊 List / Envelopes
+                    </button>
+                </div>
+            </div>
+
+            <div id="allocateMessage" class="mb-3"></div>
+
+            <!-- 1. ATTENDANCE MATRIX VIEW -->
+            <div id="matrixViewContainer">
+                <div class="matrix-wrapper mb-4">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h3 style="font-size: 15px; margin: 0; font-weight: 800;">Daily & Monthly Budget Matrix</h3>
+                            <span class="text-muted" style="font-size: 12px;">Tap any cell to cycle: 🟢 <strong>Spent</strong> → 🔘 <strong>Skipped</strong> → ⚪ <strong>Pending</strong></span>
+                        </div>
+                        <div class="d-flex align-items-center gap-3" style="font-size: 12px;">
+                            <span class="d-flex align-items-center gap-1"><span class="pill-badge badge-emerald py-0 px-2">✓</span> Spent (Expense Logged)</span>
+                            <span class="d-flex align-items-center gap-1"><span class="pill-badge badge-rose py-0 px-2">✕</span> Skipped (Funds Freed)</span>
+                            <span class="d-flex align-items-center gap-1"><span class="pill-badge badge-indigo py-0 px-2">-</span> Scheduled</span>
+                        </div>
+                    </div>
+
+                    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+                        <table class="matrix-table" id="matrixTable">
+                            <thead id="matrixHeader">
+                                <!-- Dynamic Days Header 1..31 -->
+                            </thead>
+                            <tbody id="matrixBody">
+                                <tr>
+                                    <td class="text-center p-4 text-muted">Loading attendance matrix...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. TRADITIONAL LIST VIEW -->
+            <div id="listViewContainer" style="display: none;">
+                <div class="table-container mb-4">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h3 style="font-size: 16px; margin: 0;">Active Envelopes</h3>
+                        <span class="text-muted" style="font-size: 12.5px;">Priority allocations overview</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Budget Name</th>
+                                    <th>Period</th>
+                                    <th>Target Cap</th>
+                                    <th>Allocated Envelope</th>
+                                    <th>Priority</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="budgetTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted p-4">Loading budgets...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -154,7 +309,7 @@
                             type="text"
                             id="name"
                             class="form-control-theme"
-                            placeholder="e.g. Daily Chai, Groceries, Fuel"
+                            placeholder="e.g. Daily Chai, Groceries, Travel"
                             maxlength="100"
                             required
                         >
@@ -176,8 +331,8 @@
                         <div class="col-md-6 form-group">
                             <label class="form-label">Budget Period</label>
                             <select id="period" class="form-select-theme" required>
-                                <option value="MONTHLY" selected>📅 Monthly</option>
-                                <option value="DAILY">⚡ Daily</option>
+                                <option value="DAILY" selected>⚡ Daily (Attendance Sheet)</option>
+                                <option value="MONTHLY">📅 Monthly (Full Envelope)</option>
                                 <option value="WEEKLY">🗓️ Weekly</option>
                             </select>
                         </div>
@@ -209,59 +364,28 @@
     </div>
 </div>
 
-<!-- 1-TAP SPEND FROM BUDGET MODAL -->
-<div class="modal fade" id="spendBudgetModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- 1-TAP SPEND / CELL ACTION MODAL -->
+<div class="modal fade" id="cellActionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">✓ Spend from Budget</h5>
+            <div class="modal-header py-2">
+                <h5 class="modal-title" style="font-size: 15px;" id="cellActionTitle">Day Action</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="spendBudgetForm">
-                    <input type="hidden" id="spendBudgetId">
-                    
-                    <div class="p-3 mb-3" style="background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Budget</span>
-                                <h4 id="spendBudgetName" style="font-size: 16px; margin: 2px 0 0; font-weight: 800;">-</h4>
-                            </div>
-                            <div class="text-end">
-                                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Envelope Available</span>
-                                <h4 id="spendBudgetAvailable" style="font-size: 16px; margin: 2px 0 0; font-weight: 800; color: var(--success);">₹0</h4>
-                            </div>
-                        </div>
-                    </div>
+            <div class="modal-body p-3">
+                <p id="cellActionSubtitle" class="text-muted mb-3" style="font-size: 12.5px;">Update budget tracking for this day.</p>
 
-                    <div class="form-group">
-                        <label class="form-label">Amount Spent (₹)</label>
-                        <input
-                            type="number"
-                            id="spendAmount"
-                            class="form-control-theme"
-                            placeholder="0.00"
-                            min="0.01"
-                            step="0.01"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group mb-4">
-                        <label class="form-label">Note / Description (Optional)</label>
-                        <input
-                            type="text"
-                            id="spendDescription"
-                            class="form-control-theme"
-                            placeholder="e.g. Evening Tea, Market groceries"
-                            maxlength="200"
-                        >
-                    </div>
-
-                    <button type="submit" class="btn-theme btn-primary-theme w-100 py-2">
-                        ✓ Log Expense & Drawdown Envelope
+                <div class="d-flex flex-column gap-2">
+                    <button class="btn-theme btn-primary-theme w-100 py-2 justify-content-start" onclick="applyCellAction('SPENT')">
+                        🟢 Mark as Spent (Log ₹<span id="cellSpendAmount">0</span> Expense)
                     </button>
-                </form>
+                    <button class="btn-theme btn-secondary-theme w-100 py-2 justify-content-start" style="border-color: var(--danger); color: var(--danger-text);" onclick="applyCellAction('SKIPPED')">
+                        🔘 Mark as Skipped (Free ₹<span id="cellSkipAmount">0</span> Funds)
+                    </button>
+                    <button class="btn-theme btn-secondary-theme w-100 py-2 justify-content-start text-muted" onclick="applyCellAction('PENDING')">
+                        ⚪ Reset to Scheduled / Pending
+                    </button>
+                </div>
             </div>
         </div>
     </div>
