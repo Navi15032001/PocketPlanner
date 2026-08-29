@@ -557,8 +557,42 @@ function initMobileNavigation() {
     }
 }
 
+// ===============================
+// Purge Netlify Badge Dynamically
+// ===============================
+function purgeNetlifyBadge() {
+    const selectors = [
+        'netlify-badge',
+        '#netlify-badge',
+        '.netlify-badge',
+        'a[href*="netlify.com"]',
+        'iframe[src*="netlify"]',
+        '[class*="netlify-drawer"]',
+        '[id*="netlify-drawer"]',
+        '[class*="NetlifyFeedback"]',
+        '[id*="NetlifyFeedback"]'
+    ];
+    selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => el.remove());
+    });
+
+    document.querySelectorAll('div, a, button').forEach(el => {
+        try {
+            const txt = (el.textContent || '').toLowerCase();
+            if (txt.includes('powered by netlify') || txt.includes('netlify')) {
+                el.style.display = 'none';
+                el.style.visibility = 'hidden';
+                el.remove();
+            }
+        } catch (e) {}
+    });
+}
+
+setInterval(purgeNetlifyBadge, 400);
+
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
+    purgeNetlifyBadge();
     applyLanguage(getCurrentLanguage());
     initPWA();
     initMobileNavigation();
@@ -566,3 +600,4 @@ document.addEventListener("DOMContentLoaded", () => {
         populateSidebarUser();
     }
 });
+

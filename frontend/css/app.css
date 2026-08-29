@@ -1056,17 +1056,35 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Hide Netlify Drawer & Feedback Badges */
+/* Complete Netlify Floating Badge Killer */
 [data-netlify-deploy-id],
 iframe[src*="netlify"],
+netlify-badge,
+#netlify-badge,
+.netlify-badge,
 .netlify-drawer,
 .netlify-feedback-drawer,
 #netlify-drawer-container,
-div[class*="netlify-drawer"],
-div[class*="NetlifyFeedback"] {
+div[class*="netlify"],
+div[id*="netlify"],
+a[href*="netlify.com"],
+button[class*="netlify"],
+[class*="NetlifyFeedback"],
+[id*="NetlifyFeedback"],
+[data-testid*="netlify"],
+div[style*="position: fixed"][style*="bottom:"][style*="right:"]:has(a[href*="netlify"]),
+div[style*="position: fixed"][style*="bottom:"][style*="right:"]:has(svg),
+div[style*="position: fixed"][style*="bottom: 16px"][style*="right: 16px"] {
   display: none !important;
   visibility: hidden !important;
+  opacity: 0 !important;
   pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  left: -99999px !important;
+  bottom: -99999px !important;
+  z-index: -9999 !important;
 }
 
 
