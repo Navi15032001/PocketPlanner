@@ -1056,3 +1056,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Hide Netlify Drawer & Feedback Badges */
+[data-netlify-deploy-id],
+iframe[src*="netlify"],
+.netlify-drawer,
+.netlify-feedback-drawer,
+#netlify-drawer-container,
+div[class*="netlify-drawer"],
+div[class*="NetlifyFeedback"] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
