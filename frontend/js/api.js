@@ -201,9 +201,98 @@ function initPWA() {
     });
 }
 
+// ===============================
+// Native Mobile Navigation & Offcanvas Drawer
+// ===============================
+function initMobileNavigation() {
+    const isAuthPage = window.location.pathname.endsWith("login.html") || 
+                       window.location.pathname.endsWith("register.html") || 
+                       window.location.pathname.endsWith("forgot-password.html") || 
+                       window.location.pathname.endsWith("reset-password.html") || 
+                       window.location.pathname.endsWith("index.html");
+    if (isAuthPage) return;
+
+    const sidebar = document.querySelector(".app-sidebar");
+    if (!sidebar) return;
+
+    // 1. Create mobile backdrop
+    let backdrop = document.querySelector(".mobile-nav-backdrop");
+    if (!backdrop) {
+        backdrop = document.createElement("div");
+        backdrop.className = "mobile-nav-backdrop";
+        document.body.appendChild(backdrop);
+    }
+
+    const toggleSidebar = (open) => {
+        if (open) {
+            sidebar.classList.add("mobile-open");
+            backdrop.classList.add("show");
+            document.body.style.overflow = "hidden";
+        } else {
+            sidebar.classList.remove("mobile-open");
+            backdrop.classList.remove("show");
+            document.body.style.overflow = "";
+        }
+    };
+
+    backdrop.addEventListener("click", () => toggleSidebar(false));
+
+    // 2. Add close button inside sidebar header if not present
+    const sidebarHeader = sidebar.querySelector(".sidebar-header");
+    if (sidebarHeader && !sidebarHeader.querySelector(".sidebar-close-btn")) {
+        const closeBtn = document.createElement("button");
+        closeBtn.className = "sidebar-close-btn";
+        closeBtn.style.display = "none";
+        closeBtn.innerHTML = "✕";
+        closeBtn.onclick = () => toggleSidebar(false);
+        sidebarHeader.appendChild(closeBtn);
+    }
+
+    // 3. Add Hamburger Button to Topbar if not present
+    const topbar = document.querySelector(".app-topbar");
+    if (topbar && !topbar.querySelector(".mobile-menu-btn")) {
+        const menuBtn = document.createElement("button");
+        menuBtn.className = "mobile-menu-btn me-2";
+        menuBtn.style.display = "none";
+        menuBtn.innerHTML = "☰";
+        menuBtn.onclick = () => toggleSidebar(true);
+        topbar.prepend(menuBtn);
+    }
+
+    // 4. Inject Native Bottom Navigation Bar
+    if (!document.querySelector(".mobile-bottom-nav")) {
+        const currentPath = window.location.pathname;
+        const nav = document.createElement("nav");
+        nav.className = "mobile-bottom-nav";
+
+        const items = [
+            { href: "dashboard.html", icon: "📊", label: "Home", active: currentPath.endsWith("dashboard.html") },
+            { href: "expenses.html", icon: "💸", label: "Expense", active: currentPath.endsWith("expenses.html") },
+            { href: "budgets.html", icon: "🎯", label: "Budget", active: currentPath.endsWith("budgets.html") },
+            { href: "goals.html", icon: "⭐", label: "Goals", active: currentPath.endsWith("goals.html") },
+            { href: "#menu", icon: "☰", label: "More", isMenu: true }
+        ];
+
+        nav.innerHTML = items.map(item => `
+            <a href="${item.href}" class="mobile-bottom-item ${item.active ? 'active' : ''}" ${item.isMenu ? 'data-menu="true"' : ''}>
+                <span class="mob-icon">${item.icon}</span>
+                <span>${item.label}</span>
+            </a>
+        `).join("");
+
+        document.body.appendChild(nav);
+
+        nav.querySelector('[data-menu="true"]')?.addEventListener("click", (e) => {
+            e.preventDefault();
+            toggleSidebar(true);
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     initTheme();
     initPWA();
+    initMobileNavigation();
     if (getAccessToken() && !window.location.pathname.endsWith("login.html") && !window.location.pathname.endsWith("register.html") && !window.location.pathname.endsWith("index.html")) {
         populateSidebarUser();
     }
