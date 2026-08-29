@@ -18,6 +18,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (passwordForm) {
         passwordForm.addEventListener("submit", changePassword);
     }
+
+    const langSelect = document.getElementById("language");
+    if (langSelect) {
+        langSelect.addEventListener("change", function () {
+            applyLanguage(this.value);
+        });
+    }
 });
 
 async function loadSettings() {
@@ -28,9 +35,14 @@ async function loadSettings() {
         if (document.getElementById("email")) document.getElementById("email").value = res.email || "";
         if (document.getElementById("monthly_income")) document.getElementById("monthly_income").value = res.opening_balance || 0;
         if (document.getElementById("currency")) document.getElementById("currency").value = res.currency || "INR";
-        if (document.getElementById("language")) document.getElementById("language").value = res.language || "EN";
-        if (document.getElementById("theme")) document.getElementById("theme").value = res.theme || "LIGHT";
+        
+        const activeLang = res.language || localStorage.getItem("pp_language") || "EN";
+        if (document.getElementById("language")) {
+            document.getElementById("language").value = activeLang;
+        }
+        applyLanguage(activeLang);
 
+        if (document.getElementById("theme")) document.getElementById("theme").value = res.theme || "LIGHT";
         applyTheme(res.theme || "LIGHT");
     } catch (err) {
         console.error("Failed to load settings", err);
@@ -55,9 +67,12 @@ async function updateSettings(e) {
             method: "PATCH",
             body: JSON.stringify(payload)
         });
-        showToast("Settings updated successfully!", "success");
+
+        applyLanguage(payload.language);
         applyTheme(payload.theme);
         populateSidebarUser();
+
+        showToast(payload.language === "HI" ? "प्राथमिकताएं सफलतापूर्वक अपडेट हो गईं!" : "Settings updated successfully!", "success");
     } catch (err) {
         console.error("Failed to update settings", err);
         showToast("Could not save settings.", "error");
