@@ -90,7 +90,7 @@
         <header class="app-topbar">
             <div class="topbar-left">
                 <h2>Budget Allocator</h2>
-                <p class="topbar-subtitle">Enforce priority allocations directly from your available balance.</p>
+                <p class="topbar-subtitle">Manage daily & monthly envelopes with 1-tap expense drawdown.</p>
             </div>
             <div class="topbar-right">
                 <button class="btn-theme btn-secondary-theme btn-sm-theme" onclick="allocateBudgets()">
@@ -109,8 +109,8 @@
             <!-- BUDGET TABLE -->
             <div class="table-container">
                 <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h3 style="font-size: 16px; margin: 0;">Active Budgets</h3>
-                    <span class="text-muted" style="font-size: 12.5px;">Priority-based fund allocation</span>
+                    <h3 style="font-size: 16px; margin: 0;">Active Budgets & Envelopes</h3>
+                    <span class="text-muted" style="font-size: 12.5px;">Click <strong>✓ Spend</strong> to log expense and draw down envelope</span>
                 </div>
 
                 <div class="table-responsive">
@@ -118,15 +118,16 @@
                         <thead>
                             <tr>
                                 <th>Budget Name</th>
+                                <th>Period</th>
                                 <th>Target Cap</th>
-                                <th>Allocated Amount</th>
+                                <th>Allocated Envelope</th>
                                 <th>Priority</th>
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="budgetTableBody">
                             <tr>
-                                <td colspan="5" class="text-center text-muted p-4">Loading budgets...</td>
+                                <td colspan="6" class="text-center text-muted p-4">Loading budgets...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -153,17 +154,91 @@
                             type="text"
                             id="name"
                             class="form-control-theme"
-                            placeholder="e.g. Groceries, Rent, Subscriptions"
+                            placeholder="e.g. Daily Chai, Groceries, Fuel"
                             maxlength="100"
                             required
                         >
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Target Amount (₹)</label>
+                            <input
+                                type="number"
+                                id="target_amount"
+                                class="form-control-theme"
+                                placeholder="0.00"
+                                min="0.01"
+                                step="0.01"
+                                required
+                            >
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Budget Period</label>
+                            <select id="period" class="form-select-theme" required>
+                                <option value="MONTHLY" selected>📅 Monthly</option>
+                                <option value="DAILY">⚡ Daily</option>
+                                <option value="WEEKLY">🗓️ Weekly</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Priority</label>
+                            <select id="priority" class="form-select-theme" required>
+                                <option value="HIGH">High (Funded First)</option>
+                                <option value="MEDIUM" selected>Medium</option>
+                                <option value="LOW">Low (Funded Last)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <label class="form-label">Category (Optional)</label>
+                            <select id="categorySelect" class="form-select-theme">
+                                <option value="">-- Uncategorized --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-theme btn-primary-theme w-100 py-2 mt-3">
+                        Save Budget
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 1-TAP SPEND FROM BUDGET MODAL -->
+<div class="modal fade" id="spendBudgetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">✓ Spend from Budget</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="spendBudgetForm">
+                    <input type="hidden" id="spendBudgetId">
+                    
+                    <div class="p-3 mb-3" style="background: var(--bg-body); border-radius: var(--radius-md); border: 1px solid var(--border);">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Budget</span>
+                                <h4 id="spendBudgetName" style="font-size: 16px; margin: 2px 0 0; font-weight: 800;">-</h4>
+                            </div>
+                            <div class="text-end">
+                                <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Envelope Available</span>
+                                <h4 id="spendBudgetAvailable" style="font-size: 16px; margin: 2px 0 0; font-weight: 800; color: var(--success);">₹0</h4>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label class="form-label">Target Amount (₹)</label>
+                        <label class="form-label">Amount Spent (₹)</label>
                         <input
                             type="number"
-                            id="target_amount"
+                            id="spendAmount"
                             class="form-control-theme"
                             placeholder="0.00"
                             min="0.01"
@@ -173,16 +248,18 @@
                     </div>
 
                     <div class="form-group mb-4">
-                        <label class="form-label">Priority</label>
-                        <select id="priority" class="form-select-theme" required>
-                            <option value="HIGH">High (Funded First)</option>
-                            <option value="MEDIUM" selected>Medium</option>
-                            <option value="LOW">Low (Funded Last)</option>
-                        </select>
+                        <label class="form-label">Note / Description (Optional)</label>
+                        <input
+                            type="text"
+                            id="spendDescription"
+                            class="form-control-theme"
+                            placeholder="e.g. Evening Tea, Market groceries"
+                            maxlength="200"
+                        >
                     </div>
 
                     <button type="submit" class="btn-theme btn-primary-theme w-100 py-2">
-                        Save Budget
+                        ✓ Log Expense & Drawdown Envelope
                     </button>
                 </form>
             </div>
