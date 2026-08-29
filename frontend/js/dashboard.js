@@ -196,32 +196,11 @@ function resetDefaultShortcuts() {
     showToast("Shortcuts reset to defaults.", "info");
 }
 
-const FALLBACK_CATEGORIES = [
-    { id: "Food & Dining", name: "Food & Dining" },
-    { id: "Groceries", name: "Groceries" },
-    { id: "Transport & Fuel", name: "Transport & Fuel" },
-    { id: "Shopping", name: "Shopping" },
-    { id: "Utilities & Bills", name: "Utilities & Bills" },
-    { id: "Entertainment", name: "Entertainment" },
-    { id: "Health & Medical", name: "Health & Medical" },
-    { id: "Housing & Rent", name: "Housing & Rent" },
-    { id: "Personal & Misc", name: "Personal & Misc" }
-];
-
 async function loadQuickCategories() {
-    try {
-        const response = await apiRequest("/categories/");
-        const fetched = Array.isArray(response) ? response : response.results || [];
-        categoriesList = fetched.length > 0 ? fetched : FALLBACK_CATEGORIES;
-    } catch (e) {
-        console.error("Failed to load quick categories:", e);
-        categoriesList = FALLBACK_CATEGORIES;
-    }
-
+    categoriesList = await getGlobalCategories();
     const select = document.getElementById("quickCategorySelect");
     if (select) {
-        select.innerHTML = '<option value="">Category (Optional)</option>' +
-            categoriesList.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+        await populateCategorySelect(select, null, "Category (Optional)");
     }
     renderQuickPresets();
 }

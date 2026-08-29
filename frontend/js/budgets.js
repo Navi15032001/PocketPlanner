@@ -299,22 +299,7 @@ async function spendMonthlyBudget(budgetId) {
 // TRADITIONAL BUDGET CRUD
 // ===============================
 async function loadCategories() {
-    try {
-        const response = await apiRequest("/categories/");
-        const categories = Array.isArray(response) ? response : response.results || [];
-        const select = document.getElementById("categorySelect");
-        if (!select) return;
-
-        select.innerHTML = `<option value="">-- Uncategorized --</option>`;
-        categories.forEach(cat => {
-            const opt = document.createElement("option");
-            opt.value = cat.id;
-            opt.textContent = `${cat.name} (${cat.type || 'General'})`;
-            select.appendChild(opt);
-        });
-    } catch (e) {
-        console.error("Failed to load categories:", e);
-    }
+    await populateCategorySelect(document.getElementById("categorySelect"), null, "-- Uncategorized --");
 }
 
 async function loadBudgets() {

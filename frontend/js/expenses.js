@@ -9,25 +9,10 @@ if (!token) {
 let editingExpenseId = null;
 
 // ===============================
-// LOAD CATEGORIES
+// LOAD CATEGORIES (Universal Sync)
 // ===============================
 async function loadCategories() {
-    try {
-        const response = await apiRequest("/categories/categories/");
-        const categories = Array.isArray(response) ? response : response.results || [];
-        const categorySelect = document.getElementById("category");
-
-        categorySelect.innerHTML = '<option value="">Select category (optional)</option>';
-
-        categories.forEach(category => {
-            const option = document.createElement("option");
-            option.value = category.id;
-            option.textContent = category.name;
-            categorySelect.appendChild(option);
-        });
-    } catch (error) {
-        console.error("Failed to load categories:", error);
-    }
+    await populateCategorySelect(document.getElementById("category"), null, "Select Category (Optional)");
 }
 
 function getCategoryName(categoryId) {

@@ -44,6 +44,70 @@ function applyTheme(theme) {
 }
 
 // ===============================
+// Universal Global Category Engine
+// ===============================
+let _cachedCategories = null;
+
+const STANDARD_CATEGORIES = [
+    { id: 1, name: "Food & Dining" },
+    { id: 2, name: "Groceries" },
+    { id: 3, name: "Transport & Fuel" },
+    { id: 4, name: "Shopping" },
+    { id: 5, name: "Utilities & Bills" },
+    { id: 6, name: "Entertainment" },
+    { id: 7, name: "Health & Medical" },
+    { id: 8, name: "Housing & Rent" },
+    { id: 9, name: "Personal & Misc" }
+];
+
+async function getGlobalCategories(forceRefresh = false) {
+    if (_cachedCategories && !forceRefresh) {
+        return _cachedCategories;
+    }
+
+    try {
+        const response = await apiRequest("/categories/");
+        let categories = Array.isArray(response) ? response : response.results || [];
+
+        // Auto-seed if empty
+        if (categories.length === 0) {
+            try {
+                await apiRequest("/categories/seed/", { method: "POST" });
+                const seeded = await apiRequest("/categories/");
+                categories = Array.isArray(seeded) ? seeded : seeded.results || [];
+            } catch (e) {}
+        }
+
+        if (categories.length > 0) {
+            _cachedCategories = categories.sort((a, b) => a.name.localeCompare(b.name));
+            return _cachedCategories;
+        }
+    } catch (err) {
+        console.warn("Global categories fetch error:", err);
+    }
+
+    _cachedCategories = STANDARD_CATEGORIES;
+    return _cachedCategories;
+}
+
+async function populateCategorySelect(selectElement, selectedValue = null, placeholder = "Category (Optional)") {
+    if (!selectElement) return;
+
+    const categories = await getGlobalCategories();
+    selectElement.innerHTML = `<option value="">${placeholder}</option>`;
+
+    categories.forEach(cat => {
+        const opt = document.createElement("option");
+        opt.value = cat.id;
+        opt.textContent = `🏷️ ${cat.name}`;
+        if (selectedValue && (String(cat.id) === String(selectedValue) || cat.name.toLowerCase() === String(selectedValue).toLowerCase())) {
+            opt.selected = true;
+        }
+        selectElement.appendChild(opt);
+    });
+}
+
+// ===============================
 // COMPLETE i18n TRANSLATION ENGINE (HINDI & ENGLISH)
 // ===============================
 const TRANSLATIONS = {

@@ -38,20 +38,7 @@ function renderCategoryRows(categories) {
 
 async function loadCategories() {
     try {
-        const response = await apiRequest("/categories/");
-        let categories = Array.isArray(response) ? response : response.results || [];
-
-        if (categories.length === 0) {
-            // Auto-trigger seeding on backend
-            try {
-                await apiRequest("/categories/seed/", { method: "POST" });
-                const seeded = await apiRequest("/categories/");
-                categories = Array.isArray(seeded) ? seeded : seeded.results || [];
-            } catch (e) {
-                console.warn("Could not seed categories automatically:", e);
-            }
-        }
-
+        const categories = await getGlobalCategories(true);
         renderCategoryRows(categories);
         applyLanguage(getCurrentLanguage());
     } catch (error) {
