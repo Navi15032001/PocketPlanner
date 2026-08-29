@@ -398,6 +398,13 @@ async function exportMonthlyPDF() {
             </div>
         `;
 
+        // Append to DOM offscreen so html2canvas can compute dimensions and styles
+        printableContainer.style.position = "fixed";
+        printableContainer.style.left = "-9999px";
+        printableContainer.style.top = "0";
+        printableContainer.style.zIndex = "-9999";
+        document.body.appendChild(printableContainer);
+
         // Generate PDF using html2pdf
         const opt = {
             margin: [6, 6, 8, 6],
@@ -407,11 +414,17 @@ async function exportMonthlyPDF() {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        if (window.html2pdf) {
-            await window.html2pdf().set(opt).from(printableContainer).save();
-            showToast("Executive PDF Statement downloaded successfully!", "success");
-        } else {
-            downloadFile(`/reports/export/monthly/pdf/?_t=${Date.now()}`, "PocketPlanner_Statement.pdf");
+        try {
+            if (window.html2pdf) {
+                await window.html2pdf().set(opt).from(printableContainer).save();
+                showToast("Executive PDF Statement downloaded successfully!", "success");
+            } else {
+                downloadFile(`/reports/export/monthly/pdf/?_t=${Date.now()}`, "PocketPlanner_Statement.pdf");
+            }
+        } finally {
+            if (printableContainer && printableContainer.parentNode) {
+                printableContainer.parentNode.removeChild(printableContainer);
+            }
         }
 
     } catch (err) {
