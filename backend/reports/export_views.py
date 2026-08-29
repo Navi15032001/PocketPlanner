@@ -153,7 +153,7 @@ class ExportMonthlyReportPDFView(APIView):
             Budget.objects.filter(user=user).aggregate(total=Sum('target_amount'))['total'] or 0.0
         )
         total_goal_savings = float(
-            Goal.objects.filter(user=user).aggregate(total=Sum('current_amount'))['total'] or 0.0
+            Goal.objects.filter(user=user).aggregate(total=Sum('saved_amount'))['total'] or 0.0
         )
 
         total_reserved = total_budgets + total_goal_savings
@@ -309,10 +309,10 @@ class ExportMonthlyReportPDFView(APIView):
                 Paragraph("<b>TOTAL RESERVED</b>", table_cell_muted)
             ],
             [
-                Paragraph(f"<b>₹{available_cash:,.2f}</b>", ParagraphStyle('KPI1', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#059669'))),
-                Paragraph(f"<b>₹{current_balance:,.2f}</b>", ParagraphStyle('KPI2', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#2563EB'))),
-                Paragraph(f"<b>₹{current_month_expenses:,.2f}</b>", ParagraphStyle('KPI3', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#DC2626'))),
-                Paragraph(f"<b>₹{total_reserved:,.2f}</b>", ParagraphStyle('KPI4', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#D97706')))
+                Paragraph(f"<b>Rs. {available_cash:,.2f}</b>", ParagraphStyle('KPI1', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#059669'))),
+                Paragraph(f"<b>Rs. {current_balance:,.2f}</b>", ParagraphStyle('KPI2', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#2563EB'))),
+                Paragraph(f"<b>Rs. {current_month_expenses:,.2f}</b>", ParagraphStyle('KPI3', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#DC2626'))),
+                Paragraph(f"<b>Rs. {total_reserved:,.2f}</b>", ParagraphStyle('KPI4', fontName='Helvetica-Bold', fontSize=12, leading=15, textColor=colors.HexColor('#D97706')))
             ],
             [
                 Paragraph("Free unreserved cash", table_cell_muted),
@@ -339,7 +339,7 @@ class ExportMonthlyReportPDFView(APIView):
         # Status Strip
         status_data = [[
             Paragraph(f"<b>Financial Health Status:</b> <font color='{health_color}'>{health_status}</font>", table_cell_bold),
-            Paragraph(f"<b>Total Inflow:</b> ₹{total_income:,.2f}  |  <b>Total Outflow:</b> ₹{total_expense:,.2f}", header_meta_right)
+            Paragraph(f"<b>Total Inflow:</b> Rs. {total_income:,.2f}  |  <b>Total Outflow:</b> Rs. {total_expense:,.2f}", header_meta_right)
         ]]
         status_table = Table(status_data, colWidths=[280, 243])
         status_table.setStyle(TableStyle([
@@ -356,7 +356,7 @@ class ExportMonthlyReportPDFView(APIView):
         # -------------------------------------------------------------
         # 5. EXPENSE BREAKDOWN BY CATEGORY
         # -------------------------------------------------------------
-        story.append(Paragraph("📊 Spending Breakdown by Category", section_heading_style))
+        story.append(Paragraph("<b>SPENDING BREAKDOWN BY CATEGORY</b>", section_heading_style))
 
         cat_qs = Expense.objects.filter(user=user).values('category__name').annotate(
             total=Sum('amount')
@@ -375,15 +375,15 @@ class ExportMonthlyReportPDFView(APIView):
                 cat_amt = float(c['total'] or 0.0)
                 share = (cat_amt / total_expense * 100.0) if total_expense > 0 else 0.0
                 cat_rows.append([
-                    Paragraph(f"🏷️ <b>{cat_name}</b>", table_cell_style),
-                    Paragraph(f"₹{cat_amt:,.2f}", table_cell_bold),
+                    Paragraph(f"<b>{cat_name}</b>", table_cell_style),
+                    Paragraph(f"Rs. {cat_amt:,.2f}", table_cell_bold),
                     Paragraph(f"{share:.1f}%", table_cell_style),
                     Paragraph("Standard" if share < 40 else "High Outflow", table_cell_muted)
                 ])
         else:
             cat_rows.append([
                 Paragraph("No expenses recorded yet.", table_cell_muted),
-                Paragraph("₹0.00", table_cell_muted),
+                Paragraph("Rs. 0.00", table_cell_muted),
                 Paragraph("0.0%", table_cell_muted),
                 Paragraph("—", table_cell_muted)
             ])
@@ -405,7 +405,7 @@ class ExportMonthlyReportPDFView(APIView):
         # -------------------------------------------------------------
         # 6. ACTIVE ENVELOPES & GOALS PROGRESS
         # -------------------------------------------------------------
-        story.append(Paragraph("🎯 Active Budgets & Savings Goals", section_heading_style))
+        story.append(Paragraph("<b>ACTIVE BUDGETS & SAVINGS GOALS</b>", section_heading_style))
 
         budgets_qs = Budget.objects.filter(user=user).order_by('-target_amount')[:4]
         goals_qs = Goal.objects.filter(user=user).order_by('-target_amount')[:4]
@@ -420,17 +420,17 @@ class ExportMonthlyReportPDFView(APIView):
         if budgets_qs.exists() or goals_qs.exists():
             for b in budgets_qs:
                 plan_rows.append([
-                    Paragraph(f"🎯 <b>{b.name}</b> <font color='#64748B'>({b.period or 'Budget'})</font>", table_cell_style),
-                    Paragraph(f"₹{float(b.target_amount):,.2f}", table_cell_style),
-                    Paragraph(f"₹{float(b.allocated_amount or 0):,.2f}", table_cell_bold),
+                    Paragraph(f"<b>{b.name}</b> <font color='#64748B'>({b.period or 'Budget'})</font>", table_cell_style),
+                    Paragraph(f"Rs. {float(b.target_amount):,.2f}", table_cell_style),
+                    Paragraph(f"Rs. {float(b.allocated_amount or 0):,.2f}", table_cell_bold),
                     Paragraph(f"{b.priority or 'Medium'}", table_cell_muted)
                 ])
             for g in goals_qs:
-                pct = (float(g.current_amount) / float(g.target_amount) * 100.0) if float(g.target_amount) > 0 else 0.0
+                pct = (float(g.saved_amount) / float(g.target_amount) * 100.0) if float(g.target_amount) > 0 else 0.0
                 plan_rows.append([
-                    Paragraph(f"⭐ <b>{g.name}</b> <font color='#64748B'>(Goal)</font>", table_cell_style),
-                    Paragraph(f"₹{float(g.target_amount):,.2f}", table_cell_style),
-                    Paragraph(f"₹{float(g.current_amount):,.2f}", table_cell_green),
+                    Paragraph(f"<b>{g.name}</b> <font color='#64748B'>(Goal)</font>", table_cell_style),
+                    Paragraph(f"Rs. {float(g.target_amount):,.2f}", table_cell_style),
+                    Paragraph(f"Rs. {float(g.saved_amount):,.2f}", table_cell_green),
                     Paragraph(f"{pct:.1f}% Complete", table_cell_bold)
                 ])
         else:
@@ -458,7 +458,7 @@ class ExportMonthlyReportPDFView(APIView):
         # -------------------------------------------------------------
         # 7. RECENT ITEMIZED TRANSACTIONS LOG
         # -------------------------------------------------------------
-        story.append(Paragraph("📜 Recent Transaction Ledger (Latest 8 Outflows)", section_heading_style))
+        story.append(Paragraph("<b>RECENT TRANSACTION LEDGER (Latest 8 Outflows)</b>", section_heading_style))
 
         recent_expenses = Expense.objects.filter(user=user).select_related('category').order_by('-date', '-id')[:8]
 
@@ -475,14 +475,14 @@ class ExportMonthlyReportPDFView(APIView):
                     Paragraph(str(exp.date), table_cell_muted),
                     Paragraph(f"<b>{exp.description or 'Expense'}</b>", table_cell_style),
                     Paragraph(f"{exp.category.name if exp.category else 'Uncategorized'}", table_cell_muted),
-                    Paragraph(f"-₹{float(exp.amount):,.2f}", table_cell_red)
+                    Paragraph(f"-Rs. {float(exp.amount):,.2f}", table_cell_red)
                 ])
         else:
             tx_rows.append([
                 Paragraph("—", table_cell_muted),
                 Paragraph("No recent transactions found.", table_cell_muted),
                 Paragraph("—", table_cell_muted),
-                Paragraph("₹0.00", table_cell_muted)
+                Paragraph("Rs. 0.00", table_cell_muted)
             ])
 
         tx_table = Table(tx_rows, colWidths=[90, 200, 110, 123])
