@@ -66,9 +66,135 @@ async function loadDashboard() {
 }
 
 // ===============================
-// QUICK EXPENSE FAST-LOG ENGINE
+// QUICK EXPENSE FAST-LOG & SHORTCUTS ENGINE
 // ===============================
 let categoriesList = [];
+
+const DEFAULT_PRESETS = [
+    { icon: "☕", name: "Chai", amount: 50, categoryName: "Food & Dining" },
+    { icon: "🍔", name: "Food", amount: 200, categoryName: "Food & Dining" },
+    { icon: "⛽", name: "Fuel", amount: 500, categoryName: "Transport & Fuel" },
+    { icon: "🛒", name: "Grocery", amount: 1000, categoryName: "Groceries" }
+];
+
+function getQuickPresets() {
+    try {
+        const saved = localStorage.getItem("pp_quick_presets");
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+    } catch (e) {}
+    return DEFAULT_PRESETS;
+}
+
+function renderQuickPresets() {
+    const container = document.getElementById("quickPresetsContainer");
+    if (!container) return;
+
+    const presets = getQuickPresets();
+    container.innerHTML = presets.map((p) => `
+        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(${p.amount}, '${(p.name || 'Expense').replace(/'/g, "\\'")}', '${(p.categoryName || '').replace(/'/g, "\\'")}')" style="font-size: 12px; padding: 4px 10px;">
+            ${p.icon || '⚡'} ₹${Number(p.amount).toLocaleString('en-IN')} ${p.name}
+        </button>
+    `).join("");
+}
+
+function openShortcutsModal() {
+    const container = document.getElementById("shortcutsListContainer");
+    if (!container) return;
+
+    const presets = getQuickPresets();
+    container.innerHTML = "";
+
+    presets.forEach((p, idx) => {
+        container.appendChild(createShortcutRowElement(p, idx));
+    });
+
+    const modal = new bootstrap.Modal(document.getElementById("shortcutsModal"));
+    modal.show();
+}
+
+function createShortcutRowElement(p = { icon: "⚡", name: "", amount: "", categoryName: "" }, idx = 0) {
+    const row = document.createElement("div");
+    row.className = "d-flex flex-wrap align-items-center gap-2 p-2 border rounded shortcut-row";
+    row.style.background = "var(--bg-body)";
+    row.style.borderColor = "var(--border)";
+
+    const catOptions = categoriesList.map(c => `
+        <option value="${c.name}" ${c.name.toLowerCase() === (p.categoryName || '').toLowerCase() ? 'selected' : ''}>${c.name}</option>
+    `).join("");
+
+    row.innerHTML = `
+        <div style="width: 50px;">
+            <input type="text" class="form-control-theme text-center shortcut-icon" value="${p.icon || '⚡'}" maxlength="4" placeholder="Icon" style="padding: 6px 4px; font-size: 14px;">
+        </div>
+        <div style="flex: 2 1 120px;">
+            <input type="text" class="form-control-theme shortcut-name" value="${p.name || ''}" placeholder="Name (e.g. Chai, Milk)" style="padding: 6px 10px; font-size: 13px;" required>
+        </div>
+        <div style="flex: 1.5 1 90px;">
+            <input type="number" class="form-control-theme shortcut-amount" value="${p.amount || ''}" placeholder="₹ Amount" min="0.01" step="0.01" style="padding: 6px 10px; font-size: 13px;" required>
+        </div>
+        <div style="flex: 2 1 130px;">
+            <select class="form-control-theme shortcut-category" style="padding: 6px 10px; font-size: 13px;">
+                <option value="">Category (Optional)</option>
+                ${catOptions}
+            </select>
+        </div>
+        <div>
+            <button type="button" class="btn-theme btn-danger-theme btn-sm-theme p-1 px-2" onclick="this.closest('.shortcut-row').remove()" title="Remove Shortcut">
+                🗑️
+            </button>
+        </div>
+    `;
+    return row;
+}
+
+function addShortcutRow() {
+    const container = document.getElementById("shortcutsListContainer");
+    if (!container) return;
+    container.appendChild(createShortcutRowElement({ icon: "⚡", name: "", amount: 100, categoryName: "" }, container.children.length));
+}
+
+function saveCustomShortcuts() {
+    const container = document.getElementById("shortcutsListContainer");
+    if (!container) return;
+
+    const rows = container.querySelectorAll(".shortcut-row");
+    const newPresets = [];
+
+    rows.forEach(row => {
+        const icon = row.querySelector(".shortcut-icon").value.trim() || "⚡";
+        const name = row.querySelector(".shortcut-name").value.trim();
+        const amount = parseFloat(row.querySelector(".shortcut-amount").value);
+        const categoryName = row.querySelector(".shortcut-category").value;
+
+        if (name && !isNaN(amount) && amount > 0) {
+            newPresets.push({ icon, name, amount, categoryName });
+        }
+    });
+
+    if (newPresets.length === 0) {
+        showToast("Please add at least one valid shortcut.", "warning");
+        return;
+    }
+
+    localStorage.setItem("pp_quick_presets", JSON.stringify(newPresets));
+    renderQuickPresets();
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("shortcutsModal"));
+    if (modal) modal.hide();
+
+    showToast("Fast-Log shortcuts updated successfully!", "success");
+}
+
+function resetDefaultShortcuts() {
+    if (!confirm("Reset shortcuts back to defaults?")) return;
+    localStorage.removeItem("pp_quick_presets");
+    renderQuickPresets();
+    openShortcutsModal();
+    showToast("Shortcuts reset to defaults.", "info");
+}
 
 async function loadQuickCategories() {
     try {
@@ -79,6 +205,7 @@ async function loadQuickCategories() {
             select.innerHTML = '<option value="">Category (Optional)</option>' +
                 categoriesList.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
         }
+        renderQuickPresets();
     } catch (e) {
         console.error("Failed to load quick categories:", e);
     }
@@ -86,7 +213,7 @@ async function loadQuickCategories() {
 
 async function quickLogPreset(amount, description, defaultCategoryName = "Food & Dining") {
     const today = new Date().toISOString().split("T")[0];
-    let matchedCategory = categoriesList.find(c => c.name.toLowerCase().includes(defaultCategoryName.toLowerCase()));
+    let matchedCategory = categoriesList.find(c => defaultCategoryName && c.name.toLowerCase().includes(defaultCategoryName.toLowerCase()));
 
     try {
         await apiRequest("/expenses/", {

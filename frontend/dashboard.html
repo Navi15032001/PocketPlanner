@@ -166,26 +166,20 @@
                         <span class="fw-bold" style="font-size: 14.5px; color: var(--text-main);">Quick Log Expense</span>
                         <span class="pill-badge badge-indigo" style="font-size: 11px;">1-Tap Entry</span>
                     </div>
-                    <!-- Quick Presets -->
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(50, 'Chai / Coffee', 'Food')" style="font-size: 12px; padding: 4px 10px;">
-                            ☕ ₹50 Chai
-                        </button>
-                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(200, 'Meal / Food', 'Food')" style="font-size: 12px; padding: 4px 10px;">
-                            🍔 ₹200 Food
-                        </button>
-                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(500, 'Petrol / Fuel', 'Transport')" style="font-size: 12px; padding: 4px 10px;">
-                            ⛽ ₹500 Fuel
-                        </button>
-                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="quickLogPreset(1000, 'Groceries', 'Groceries')" style="font-size: 12px; padding: 4px 10px;">
-                            🛒 ₹1k Grocery
+                    <!-- Quick Presets Container & Edit Button -->
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <div id="quickPresetsContainer" class="d-flex flex-wrap gap-2">
+                            <!-- Injected dynamically from localStorage -->
+                        </div>
+                        <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="openShortcutsModal()" title="Customize Fast-Log Shortcuts" style="font-size: 12px; padding: 4px 8px;">
+                            ⚙️ Edit Shortcuts
                         </button>
                     </div>
                 </div>
 
                 <form id="quickLogForm" class="d-flex flex-wrap gap-2 align-items-center">
                     <div style="flex: 1 1 120px; min-width: 110px;">
-                        <input type="number" id="quickAmount" class="form-control-theme" placeholder="₹ Amount" step="0.01" min="1" required style="padding: 7px 12px; font-size: 13.5px;">
+                        <input type="number" id="quickAmount" class="form-control-theme" placeholder="₹ Amount" step="0.01" min="0.01" required style="padding: 7px 12px; font-size: 13.5px;">
                     </div>
                     <div style="flex: 2 1 180px; min-width: 140px;">
                         <input type="text" id="quickDesc" class="form-control-theme" placeholder="What was this for? (e.g. Snacks)" style="padding: 7px 12px; font-size: 13.5px;">
@@ -310,6 +304,43 @@
 
 </div>
 
+<!-- CUSTOMIZE SHORTCUTS MODAL -->
+<div class="modal fade" id="shortcutsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">⚙️ Customize Fast-Log Shortcuts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted" style="font-size: 13px; margin-bottom: 16px;">
+                    Set your most frequent daily expenses (like Chai, Lunch, Fuel, Milk) for 1-tap fast logging.
+                </p>
+                <div id="shortcutsListContainer" class="d-flex flex-column gap-2 mb-3">
+                    <!-- Dynamic rows of shortcuts -->
+                </div>
+                <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="addShortcutRow()">
+                    + Add New Shortcut
+                </button>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme text-danger" onclick="resetDefaultShortcuts()">
+                    🔄 Reset Defaults
+                </button>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn-theme btn-secondary-theme btn-sm-theme" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn-theme btn-primary-theme btn-sm-theme" onclick="saveCustomShortcuts()">
+                        💾 Save Shortcuts
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="js/api.js"></script>
 <script src="js/dashboard.js"></script>
