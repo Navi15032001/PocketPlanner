@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pocketplanner-cache-v2';
+const CACHE_NAME = 'pocketplanner-cache-v3';
 const STATIC_ASSETS = [
   './',
   './dashboard.html',
@@ -16,7 +16,10 @@ const STATIC_ASSETS = [
   './settings.html',
   './css/app.css',
   './js/api.js',
-  './favicon.ico'
+  './favicon.ico',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
