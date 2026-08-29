@@ -420,9 +420,16 @@ document.addEventListener("DOMContentLoaded", () => {
     loadQuickCategories();
 });
 
-loadDashboard();
-loadSmartInsights();
-loadGreeting();
-loadCategoryChart();
-loadMonthlyTrend();
-loadRecentTransactions();
+async function initDashboardFlow() {
+    await Promise.all([
+        loadDashboard(),
+        loadSmartInsights(),
+        loadGreeting(),
+        loadCategoryChart(),
+        loadMonthlyTrend(),
+        loadRecentTransactions()
+    ]);
+    applyLanguage(getCurrentLanguage());
+}
+
+initDashboardFlow();

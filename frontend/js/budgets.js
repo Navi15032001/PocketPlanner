@@ -222,6 +222,7 @@ async function loadMatrix() {
             body.appendChild(tr);
         });
 
+        applyLanguage(getCurrentLanguage());
     } catch (error) {
         console.error("Failed to load matrix:", error);
     }

@@ -44,68 +44,12 @@ function applyTheme(theme) {
 }
 
 // ===============================
-// Global i18n Translation Engine (Hindi & English)
+// COMPLETE i18n TRANSLATION ENGINE (HINDI & ENGLISH)
 // ===============================
 const TRANSLATIONS = {
-    EN: {
-        "Overview": "Overview",
-        "Dashboard": "Dashboard",
-        "Finance": "Finance",
-        "Income": "Income",
-        "Expenses": "Expenses",
-        "Budgets": "Budgets",
-        "Planning": "Planning",
-        "Goals": "Goals",
-        "Savings": "Savings",
-        "Calendar": "Calendar",
-        "Analytics & Settings": "Analytics & Settings",
-        "Reports": "Reports",
-        "Categories": "Categories",
-        "Profile": "Profile",
-        "Settings": "Settings",
-        "Logout": "Logout",
-        "Personal Account": "Personal Account",
-        "Home": "Home",
-        "Expense": "Expense",
-        "Budget": "Budget",
-        "More": "More",
-        "Available Cash": "Available Cash",
-        "Free unreserved balance": "Free unreserved balance",
-        "Current Balance": "Current Balance",
-        "Opening + Income - Expenses": "Opening + Income - Expenses",
-        "Month Expenses": "Month Expenses",
-        "Current month spending": "Current month spending",
-        "Total Reserved": "Total Reserved",
-        "Budgets + Savings goals": "Budgets + Savings goals",
-        "Financial Health Score": "Financial Health Score",
-        "Budget Allocation": "Budget Allocation",
-        "Quick Expense Fast-Log": "Quick Expense Fast-Log",
-        "Recent Transactions": "Recent Transactions",
-        "Income vs Expense Trend": "Income vs Expense Trend",
-        "Smart Financial Insights": "Smart Financial Insights",
-        "Month-End Outflow Forecast": "Month-End Outflow Forecast",
-        "+ Log Expense": "+ Log Expense",
-        "+ Add Income": "+ Add Income",
-        "+ Create Budget": "+ Create Budget",
-        "+ New Goal": "+ New Goal",
-        "+ Add Saving": "+ Add Saving",
-        "⚡ Auto-Allocate Balance": "⚡ Auto-Allocate Balance",
-        "⚡ Auto-Allocate": "⚡ Auto-Allocate",
-        "Save Budget": "Save Budget",
-        "Save Preferences": "Save Preferences",
-        "View All →": "View All →",
-        "Full Report →": "Full Report →",
-        "Edit": "Edit",
-        "Delete": "Delete",
-        "✓ Spend": "✓ Spend",
-        "General Preferences": "General Preferences",
-        "Full Name": "Full Name",
-        "Email Address": "Email Address",
-        "Language": "Language",
-        "Currency": "Currency",
-        "App Appearance Theme": "App Appearance Theme"
-    },
+    EN: {},
     HI: {
+        // Navigation & Layout
         "Overview": "अवलोकन",
         "Dashboard": "डैशबोर्ड",
         "Finance": "वित्त प्रबंधन",
@@ -127,6 +71,8 @@ const TRANSLATIONS = {
         "Expense": "खर्च",
         "Budget": "बजट",
         "More": "मेनू",
+
+        // Dashboard
         "Available Cash": "उपलब्ध फ्री कैश",
         "Free unreserved balance": "खर्च के लिए उपलब्ध फ्री बैलेंस",
         "Current Balance": "वर्तमान बैंक बैलेंस",
@@ -138,30 +84,146 @@ const TRANSLATIONS = {
         "Financial Health Score": "वित्तीय स्वास्थ्य स्कोर",
         "Budget Allocation": "बजट आवंटन",
         "Quick Expense Fast-Log": "⚡ 2-सेकंड त्वरित खर्च दर्ज करें",
+        "Log a cash outflow in 2 seconds": "2 सेकंड में तुरंत खर्च दर्ज करें",
         "Recent Transactions": "हाल के लेन-देन",
-        "Income vs Expense Trend": "मासिक आय बनाम खर्च",
+        "Latest cash outflow entries": "हाल ही में किए गए खर्च",
+        "Income vs Expense Trend": "मासिक आय बनाम खर्च का रुझान",
+        "Monthly cash flow trajectory": "मासिक नकदी प्रवाह का विश्लेषण",
         "Smart Financial Insights": "स्मार्ट वित्तीय सुझाव",
-        "Month-End Outflow Forecast": "माह-अंत खर्च अनुमान",
-        "+ Log Expense": "+ खर्च दर्ज करें",
-        "+ Add Income": "+ आय जोड़ें",
-        "+ Create Budget": "+ बजट बनाएं",
-        "+ New Goal": "+ नया लक्ष्य",
-        "+ Add Saving": "+ बचत जोड़ें",
-        "⚡ Auto-Allocate Balance": "⚡ ऑटो-एलोकेट बैलेंस",
-        "⚡ Auto-Allocate": "⚡ ऑटो-एलोकेट",
-        "Save Budget": "बजट सेव करें",
-        "Save Preferences": "सेटिंग्स सेव करें",
+        "Automated recommendations based on balance": "आपके बैलेंस और खर्च के आधार पर स्वचालित सलाह",
+        "Month-End Outflow Forecast": "माह-अंत खर्च का अनुमान",
+        "Projected run-rate based on daily average": "दैनिक औसत खर्च के आधार पर कुल अनुमान",
+        "Amount (₹)": "राशि (₹)",
+        "Category": "कैटेगरी",
+        "Description (Optional)": "विवरण (वैकल्पिक)",
+        "+ Fast Log Expense": "+ तुरंत खर्च दर्ज करें",
+        "Coffee / Tea": "☕ चाय / कॉफ़ी",
+        "Lunch / Food": "🍱 दोपहर का भोजन",
+        "Auto-Ride / Fuel": "⛽ किराया / पेट्रोल",
+        "Groceries": "🛒 राशन / किराना",
         "View All →": "सभी देखें →",
         "Full Report →": "पूरी रिपोर्ट →",
-        "Edit": "बदलें",
-        "Delete": "हटाएं",
+
+        // Health Statuses
+        "Healthy & well balanced.": "उत्कृष्ट और संतुलित वित्तीय स्थिति।",
+        "Moderate — keep an eye on spending.": "मध्यम — खर्चे पर थोड़ा ध्यान दें।",
+        "Tight — high balance allocation.": "कम फ्री बैलेंस — खर्च सीमित रखें।",
+        "Critical — cash flow deficit.": "गंभीर स्थिति — खर्च बैलेंस से अधिक है।",
+        "Over-allocated — budgets exceed balance.": "अति-आवंटित — बजट कुल बैलेंस से अधिक हैं।",
+        "Add opening balance and log entries.": "शुरुआती बैलेंस और प्रविष्टियां दर्ज करें।",
+
+        // Budgets & Attendance Matrix
+        "Budget Allocator": "बजट आवंटन व प्रबंधन",
+        "Budget Matrix & Attendance Sheet": "बजट मैट्रिक्स और दैनिक अटेंडेंस शीट",
+        "Track day-to-day spending or skip days to instantly free up unreserved cash.": "रोज़ाना का खर्च ट्रैक करें या छुट्टी के दिन स्किप करके तुरंत फ्री कैश बचाएं।",
+        "Active Budgets & Envelopes": "सक्रिय बजट और एनवेलप",
+        "Active Budgets": "सक्रिय बजट",
+        "Click ✓ Spend to log expense and draw down envelope": "खर्च दर्ज करने और बजट से घटाने के लिए ✓ खर्च पर क्लिक करें",
+        "Budget Name": "बजट का नाम",
+        "Period": "अवधि",
+        "Target Cap": "लक्ष्य सीमा (₹)",
+        "Allocated Envelope": "आवंटित राशि",
+        "Priority": "प्राथमिकता",
+        "Actions": "कार्य",
+        "Monthly Summary": "मासिक सारांश",
+        "Action": "कार्य",
+        "Daily & Monthly Budget Matrix": "दैनिक एवं मासिक बजट मैट्रिक्स",
+        "Tap any cell to cycle: 🟢 Spent → 🔘 Skipped → ⚪ Pending": "स्थिति बदलने के लिए किसी भी सेल पर क्लिक करें: 🟢 खर्च हुआ → 🔘 स्किप (बचत) → ⚪ लंबित",
+        "Spent (Expense Logged)": "खर्च हुआ (दर्ज)",
+        "Skipped (Funds Freed)": "स्किप (पैसे बचे)",
+        "Scheduled": "नियोजित",
+        "Attendance Matrix": "📋 अटेंडेंस मैट्रिक्स",
+        "List / Envelopes": "📊 सूची / एनवेलप",
+        "⚡ Auto-Allocate Balance": "⚡ ऑटो-एलोकेट बैलेंस",
+        "⚡ Auto-Allocate": "⚡ ऑटो-एलोकेट",
+        "+ Create Budget": "+ बजट बनाएं",
+        "Create Budget": "नया बजट बनाएं",
+        "Edit Budget": "बजट संपादित करें",
+        "Target Amount (₹)": "लक्ष्य राशि (₹)",
+        "Budget Period": "बजट की अवधि",
+        "High (Funded First)": "उच्च (पहले फंड होगा)",
+        "Medium": "मध्यम",
+        "Low (Funded Last)": "निम्न (अंत में फंड होगा)",
+        "⚡ Daily (Attendance Sheet)": "⚡ दैनिक (अटेंडेंस शीट)",
+        "📅 Monthly (Full Envelope)": "📅 मासिक (पूरा एनवेलप)",
+        "🗓️ Weekly": "🗓️ साप्ताहिक",
+        "Category (Optional)": "कैटेगरी (वैकल्पिक)",
+        "-- Uncategorized --": "-- बिना कैटेगरी --",
+        "Save Budget": "बजट सेव करें",
+        "Day Action": "दैनिक कार्य",
+        "Update budget tracking for this day.": "इस दिन के लिए बजट ट्रैकिंग अपडेट करें।",
+        "Mark as Spent": "🟢 खर्च हुआ दर्ज करें",
+        "Mark as Skipped (Free": "🔘 स्किप दर्ज करें (पैसे बचाएं",
+        "Reset to Scheduled / Pending": "⚪ लंबित / रीसेट करें",
         "✓ Spend": "✓ खर्च करें",
+        "✓ Spend / Deduct": "✓ खर्च करें / घटाएं",
+        "Edit": "संपादित करें",
+        "Delete": "हटाएं",
+        "Prev": "पिछला",
+        "Next": "अगला",
+        "Today": "आज",
+
+        // Expenses
+        "Expenses Tracker": "खर्च ट्रैकर",
+        "Monitor and manage all historical cash outflows.": "अपने सभी ऐतिहासिक खर्चों की निगरानी और प्रबंधन करें।",
+        "Total Outflow": "कुल खर्च",
+        "All Expenses Record": "सभी खर्चों का रिकॉर्ड",
+        "Log Expense": "खर्च दर्ज करें",
+        "+ Log Expense": "+ खर्च दर्ज करें",
+        "Import CSV": "CSV आयात करें",
+        "Export CSV": "CSV निर्यात करें",
+        "Date": "दिनांक",
+        "Amount": "राशि",
+        "Description": "विवरण",
+        "Save Expense": "खर्च सेव करें",
+
+        // Income
+        "Income Tracker": "आय / कमाई ट्रैकर",
+        "Record salary, freelance earnings, and automatic goal splits.": "वेतन, फ्रीलांस कमाई दर्ज करें और स्वचालित लक्ष्य बचत करें।",
+        "Total Inflow": "कुल प्राप्त आय",
+        "All Income Streams": "सभी आय के स्रोत",
+        "+ Add Income": "+ आय जोड़ें",
+        "Add Income": "आय जोड़ें",
+        "Title": "शीर्षक / स्रोत",
+        "Auto-Split to Goals": "लक्ष्यों में ऑटो-स्प्लिट",
+        "Save Income": "आय सेव करें",
+
+        // Goals & Savings
+        "Savings Goals": "बचत लक्ष्य",
+        "Set financial targets and track auto-split progress.": "वित्तीय लक्ष्य निर्धारित करें और स्वचालित बचत ट्रैक करें।",
+        "+ New Goal": "+ नया लक्ष्य",
+        "+ Add Saving": "+ बचत जोड़ें",
+        "Goal Name": "लक्ष्य का नाम",
+        "Target Amount": "लक्ष्य राशि",
+        "Saved So Far": "अब तक की बचत",
+        "Auto-Split %": "ऑटो-स्प्लिट %",
+        "Status": "स्थिति",
+        "Active": "सक्रिय",
+        "Completed": "पूर्ण",
+
+        // Settings Page
+        "Account Settings": "खाता सेटिंग्स",
+        "Configure your financial base parameters, theme, and security credentials.": "अपने वित्तीय पैरामीटर, थीम और सुरक्षा सेटिंग्स कॉन्फ़िगर करें।",
         "General Preferences": "सामान्य प्राथमिकताएं",
+        "Manage your name, theme, and opening balance.": "अपना नाम, थीम और शुरुआती बैलेंस प्रबंधित करें।",
         "Full Name": "पूरा नाम",
         "Email Address": "ईमेल पता",
-        "Language": "भाषा (Language)",
+        "Starting / Opening Balance (₹)": "शुरुआती / ओपनिंग बैलेंस (₹)",
+        "One-time baseline opening balance in your bank/wallet.": "आपके बैंक/वॉलेट का एकमुश्त शुरुआती बेसलाइन बैलेंस।",
+        "App Appearance Theme": "ऐप थीम (दिखावट)",
+        "Light Theme": "लाइट थीम (दिन)",
+        "Dark Theme": "डार्क थीम (रात)",
         "Currency": "मुद्रा (करेंसी)",
-        "App Appearance Theme": "ऐप थीम (दिखावट)"
+        "Language": "भाषा (Language)",
+        "Save Preferences": "प्राथमिकताएं सेव करें",
+        "Security & Password": "सुरक्षा और पासवर्ड",
+        "Ensure your account is protected with a strong password.": "अपने खाते को एक मजबूत पासवर्ड से सुरक्षित रखें।",
+        "Current Password": "वर्तमान पासवर्ड",
+        "New Password": "नया पासवर्ड",
+        "Confirm New Password": "नए पासवर्ड की पुष्टि करें",
+        "Change Password": "पासवर्ड बदलें",
+        "At least 6 characters": "कम से कम 6 अक्षर",
+        "Your full name": "आपका पूरा नाम"
     }
 };
 
@@ -171,63 +233,67 @@ function getCurrentLanguage() {
 
 function t(key) {
     const lang = getCurrentLanguage();
-    const dict = TRANSLATIONS[lang] || TRANSLATIONS.EN;
-    return dict[key] || key;
+    if (lang === "HI" && TRANSLATIONS.HI[key]) {
+        return TRANSLATIONS.HI[key];
+    }
+    return key;
 }
 
 function applyLanguage(lang) {
     const activeLang = (lang === "HI" || lang === "hi") ? "HI" : "EN";
     localStorage.setItem("pp_language", activeLang);
 
-    const dict = TRANSLATIONS[activeLang] || TRANSLATIONS.EN;
+    if (activeLang === "EN") {
+        document.querySelectorAll("[data-orig-text]").forEach(el => {
+            el.textContent = el.getAttribute("data-orig-text");
+        });
+        document.querySelectorAll("[data-orig-ph]").forEach(el => {
+            el.placeholder = el.getAttribute("data-orig-ph");
+        });
+        return;
+    }
 
-    // 1. Sidebar section titles
-    document.querySelectorAll(".nav-section-title").forEach(el => {
-        const text = el.getAttribute("data-orig") || el.textContent.trim();
-        if (!el.getAttribute("data-orig")) el.setAttribute("data-orig", text);
-        if (dict[text]) el.textContent = dict[text];
-    });
+    const dict = TRANSLATIONS.HI;
 
-    // 2. Sidebar Nav Items
-    document.querySelectorAll(".nav-item").forEach(el => {
-        const span = el.querySelector("span:not(.nav-icon)");
-        if (span) {
-            const text = span.getAttribute("data-orig") || span.textContent.trim();
-            if (!span.getAttribute("data-orig")) span.setAttribute("data-orig", text);
-            if (dict[text]) span.textContent = dict[text];
+    function translateNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const val = node.nodeValue.trim();
+            if (val && dict[val]) {
+                if (node.parentElement && !node.parentElement.hasAttribute("data-orig-text")) {
+                    node.parentElement.setAttribute("data-orig-text", val);
+                }
+                node.nodeValue = node.nodeValue.replace(val, dict[val]);
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.hasAttribute("placeholder")) {
+                const ph = node.getAttribute("placeholder").trim();
+                if (dict[ph]) {
+                    if (!node.hasAttribute("data-orig-ph")) {
+                        node.setAttribute("data-orig-ph", ph);
+                    }
+                    node.setAttribute("placeholder", dict[ph]);
+                }
+            }
+
+            if (node.tagName === "OPTION") {
+                const optText = node.textContent.trim();
+                if (dict[optText]) {
+                    if (!node.hasAttribute("data-orig-text")) {
+                        node.setAttribute("data-orig-text", optText);
+                    }
+                    node.textContent = dict[optText];
+                }
+            }
+
+            for (let child of node.childNodes) {
+                translateNode(child);
+            }
         }
-    });
+    }
 
-    // 3. KPI titles & footers
-    document.querySelectorAll(".kpi-title, .kpi-footer span").forEach(el => {
-        const text = el.getAttribute("data-orig") || el.textContent.trim();
-        if (!el.getAttribute("data-orig")) el.setAttribute("data-orig", text);
-        if (dict[text]) el.textContent = dict[text];
-    });
-
-    // 4. Buttons
-    document.querySelectorAll("button, .btn-theme, a.btn-theme").forEach(btn => {
-        const text = btn.getAttribute("data-orig") || btn.textContent.trim();
-        if (!btn.getAttribute("data-orig")) btn.setAttribute("data-orig", text);
-        if (dict[text]) btn.textContent = dict[text];
-    });
-
-    // 5. Form labels & Headings
-    document.querySelectorAll(".form-label, .user-role").forEach(el => {
-        const text = el.getAttribute("data-orig") || el.textContent.trim();
-        if (!el.getAttribute("data-orig")) el.setAttribute("data-orig", text);
-        if (dict[text]) el.textContent = dict[text];
-    });
-
-    // 6. Mobile bottom nav
-    document.querySelectorAll(".mobile-bottom-item").forEach(item => {
-        const span = item.querySelector("span:not(.mob-icon)");
-        if (span) {
-            const text = span.getAttribute("data-orig") || span.textContent.trim();
-            if (!span.getAttribute("data-orig")) span.setAttribute("data-orig", text);
-            if (dict[text]) span.textContent = dict[text];
-        }
-    });
+    if (document.body) {
+        translateNode(document.body);
+    }
 }
 
 // ===============================
