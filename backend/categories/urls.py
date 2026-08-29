@@ -5,7 +5,8 @@ from .views import CategoryViewSet
 
 
 router = DefaultRouter()
-router.register('categories', CategoryViewSet, basename='category')
+router.register(r'categories', CategoryViewSet, basename='category-nested')
+router.register(r'', CategoryViewSet, basename='category')
 
 
 urlpatterns = [

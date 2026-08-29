@@ -1,5 +1,5 @@
 // ===============================
-// AUTH CHECK
+// AUTH CHECK & CATEGORIES CONTROLLER
 // ===============================
 const token = localStorage.getItem("access_token");
 if (!token) {
@@ -10,7 +10,7 @@ let editingCategoryId = null;
 
 async function loadCategories() {
     try {
-        const response = await apiRequest("/categories/categories/");
+        const response = await apiRequest("/categories/");
         const categories = Array.isArray(response) ? response : response.results || [];
 
         const tableBody = document.getElementById("categoryTableBody");
@@ -37,6 +37,8 @@ async function loadCategories() {
             `;
             tableBody.appendChild(row);
         });
+
+        applyLanguage(getCurrentLanguage());
     } catch (error) {
         console.error("Failed to load categories:", error);
     }
@@ -49,13 +51,13 @@ document.getElementById("categoryForm").addEventListener("submit", async functio
 
     try {
         if (editingCategoryId) {
-            await apiRequest(`/categories/categories/${editingCategoryId}/`, {
+            await apiRequest(`/categories/${editingCategoryId}/`, {
                 method: "PUT",
                 body: JSON.stringify({ name: name })
             });
             showToast("Category updated!", "success");
         } else {
-            await apiRequest("/categories/categories/", {
+            await apiRequest("/categories/", {
                 method: "POST",
                 body: JSON.stringify({ name: name })
             });
@@ -77,7 +79,7 @@ document.getElementById("categoryForm").addEventListener("submit", async functio
 
 async function editCategory(id) {
     try {
-        const category = await apiRequest(`/categories/categories/${id}/`);
+        const category = await apiRequest(`/categories/${id}/`);
         editingCategoryId = id;
 
         document.getElementById("name").value = category.name;
@@ -102,7 +104,7 @@ async function deleteCategory(id) {
     if (!confirm("Delete this category? Expenses using it will become Uncategorized.")) return;
 
     try {
-        await apiRequest(`/categories/categories/${id}/`, { method: "DELETE" });
+        await apiRequest(`/categories/${id}/`, { method: "DELETE" });
         showToast("Category deleted.", "info");
         await loadCategories();
     } catch (error) {
