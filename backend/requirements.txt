@@ -4,6 +4,7 @@ django-cors-headers==4.9.0
 djangorestframework==3.17.2
 mysqlclient==2.2.8
 pymysql==1.1.1
+psycopg2-binary==2.9.10
 cryptography==44.0.1
 pillow==12.3.0
 python-dotenv==1.2.2

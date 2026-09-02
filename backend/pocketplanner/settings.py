@@ -106,20 +106,83 @@ TEMPLATES = [
 WSGI_APPLICATION = 'pocketplanner.wsgi.application'
 
 
+import urllib.parse
+
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT'),
-        'CONN_MAX_AGE': 60,
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    url = urllib.parse.urlparse(DATABASE_URL)
+    engine_scheme = url.scheme.lower()
+
+    if 'postgres' in engine_scheme:
+        db_engine = 'django.db.backends.postgresql'
+    elif 'mysql' in engine_scheme:
+        db_engine = 'django.db.backends.mysql'
+        try:
+            import pymysql
+            pymysql.install_as_MySQLdb()
+        except ImportError:
+            pass
+    else:
+        db_engine = 'django.db.backends.sqlite3'
+
+    db_name = url.path.lstrip('/')
+    db_user = urllib.parse.unquote(url.username or '')
+    db_password = urllib.parse.unquote(url.password or '')
+    db_host = url.hostname
+    db_port = url.port
+
+    db_options = {}
+    if 'mysql' in engine_scheme:
+        db_options = {'ssl': {'ssl_mode': 'REQUIRED'}}
+    elif 'postgres' in engine_scheme:
+        db_options = {'sslmode': 'require'}
+
+    DATABASES = {
+        'default': {
+            'ENGINE': db_engine,
+            'NAME': db_name,
+            'USER': db_user,
+            'PASSWORD': db_password,
+            'HOST': db_host,
+            'PORT': db_port or (3306 if 'mysql' in engine_scheme else 5432),
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': db_options,
+        }
     }
-}
+elif os.getenv('DB_NAME') and os.getenv('DB_HOST'):
+    db_engine = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
+    if 'mysql' in db_engine:
+        try:
+            import pymysql
+            pymysql.install_as_MySQLdb()
+        except ImportError:
+            pass
+
+    DATABASES = {
+        'default': {
+            'ENGINE': db_engine,
+            'NAME': os.getenv('DB_NAME'),
+            'USER': os.getenv('DB_USER'),
+            'PASSWORD': os.getenv('DB_PASSWORD'),
+            'HOST': os.getenv('DB_HOST'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': {
+                'ssl': {'ssl_mode': os.getenv('DB_SSL_MODE', 'REQUIRED')}
+            } if 'mysql' in db_engine and os.getenv('DB_SSL_MODE') != 'DISABLED' else {}
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
