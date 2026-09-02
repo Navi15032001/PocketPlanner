@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pocketplanner-cache-v6';
+const CACHE_NAME = 'pocketplanner-cache-v7';
 const STATIC_ASSETS = [
   './',
   './dashboard.html',
@@ -10,13 +10,13 @@ const STATIC_ASSETS = [
   './goals.html',
   './savings.html',
   './calender.html',
+  './calendar.html',
   './categories.html',
   './reports.html',
   './profile.html',
   './settings.html',
   './css/app.css',
   './js/api.js',
-  './js/i18n.js',
   './favicon.ico',
   './favicon.svg',
   './icon-192.png',
