@@ -1,0 +1,340 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Zqk3eji8aRHe8chZpNK1M2$+RdkRw7yYcF32+4ue6r5jJwcoAww27dQflD44UEZzzU=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "navi",
+    "first_name": "",
+    "last_name": "",
+    "email": "naveen.sharma15032001@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-08T14:32:15.717Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$gEAYqcsDifOPVMQl4TjFlr$6IIeY8ooQkajisiulxFd9ytKkqGU+NkJajjGFWQuBKA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "TestUser",
+    "first_name": "",
+    "last_name": "",
+    "email": "TestUser123@gmai.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-08T15:02:26.640Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$KGOY0sHGCxc0388MZyjanj$M0vaNmGfD9VdWL2OO7nK/7EPW00sRkgeXaFZA/pWbRo=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "TestUser2",
+    "first_name": "",
+    "last_name": "",
+    "email": "TestUser2123@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-10T10:48:46.856Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$XzhamyeTdgt18XwYPH21rD$d00YLBzeVKD/43gXT9Y2CnUtJK3r8dL+qzicY3uPFQI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "TestUser3",
+    "first_name": "",
+    "last_name": "",
+    "email": "TestUser3@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-10T14:27:03.801Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$nkVZ1v82tC19WJ5gAppswq$ixCGTISx02VLZeY3xLTpF9hYHmOsazmpGbVMJte/EIs=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Patel",
+    "first_name": "",
+    "last_name": "",
+    "email": "binipatel1702@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-29T11:56:12.288Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$HKX5pUHqHk9iRc3HEAPP96$kGMHDIqI1QL6+vMOpbLtZKUN9fvnA1SCoFSWWXUIdYw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser_1788024447",
+    "first_name": "",
+    "last_name": "",
+    "email": "testuser_1788024447@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-29T17:27:26.858Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$M5y4h7JpQU8YZCYkl3Ofp3$KOMSHyS1uxwBrHxYR4Q19q7C2qwjRFYhIXDkucKrHgw=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "testuser_1788024476",
+    "first_name": "",
+    "last_name": "",
+    "email": "testuser_1788024476@example.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-08-29T17:27:56.157Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "navi"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-08T14:58:06Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-08T15:02:27.311Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "TestUser2"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-10T10:48:48.627Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 4,
+  "fields": {
+    "user": [
+      "TestUser3"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-10T14:27:04.768Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "Patel"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-29T11:56:15.016Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "testuser_1788024447"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-29T17:27:29.537Z"
+  }
+},
+{
+  "model": "accounts.userprofile",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "testuser_1788024476"
+    ],
+    "opening_balance": "0.00",
+    "currency": "INR",
+    "language": "EN",
+    "theme": "LIGHT",
+    "profile_picture": "",
+    "created_at": "2026-08-29T17:27:58.639Z"
+  }
+},
+{
+  "model": "categories.category",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "name": "Food",
+    "created_at": "2026-08-09T07:09:21.108Z"
+  }
+},
+{
+  "model": "categories.category",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "name": "Stationary",
+    "created_at": "2026-08-17T09:29:18.079Z"
+  }
+},
+{
+  "model": "expenses.expense",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "category": 1,
+    "amount": "50.00",
+    "description": "Chai / Coffee",
+    "date": "2026-08-29",
+    "created_at": "2026-08-29T10:14:57.078Z",
+    "updated_at": "2026-08-29T15:52:03.344Z"
+  }
+},
+{
+  "model": "expenses.expense",
+  "pk": 6,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "category": 1,
+    "amount": "50.00",
+    "description": "Chai",
+    "date": "2026-08-31",
+    "created_at": "2026-08-31T04:03:27.620Z",
+    "updated_at": "2026-08-31T04:03:27.620Z"
+  }
+},
+{
+  "model": "expenses.expense",
+  "pk": 7,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "category": 1,
+    "amount": "50.00",
+    "description": "Chai",
+    "date": "2026-08-31",
+    "created_at": "2026-08-31T04:03:28.413Z",
+    "updated_at": "2026-08-31T04:03:28.413Z"
+  }
+},
+{
+  "model": "goals.goal",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "name": "Emergency fund",
+    "target_amount": "25000.00",
+    "saved_amount": "250.00",
+    "auto_split_percent": "25.00",
+    "deadline": null,
+    "priority": "HIGH",
+    "status": "ACTIVE",
+    "description": "",
+    "created_at": "2026-08-29T10:10:40.055Z"
+  }
+},
+{
+  "model": "income.income",
+  "pk": 5,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "title": "Papa",
+    "amount": "1000.00",
+    "income_type": "OTHER",
+    "date": "2026-08-29",
+    "description": "",
+    "created_at": "2026-08-29T10:12:20.859Z"
+  }
+},
+{
+  "model": "savings.saving",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "TestUser"
+    ],
+    "goal": 3,
+    "amount": "250.00",
+    "date": "2026-08-29",
+    "description": "Auto-split (25.00%) from income: Papa",
+    "created_at": "2026-08-29T10:12:21.581Z"
+  }
+}
+]
