@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pocketplanner-cache-v8';
+const CACHE_NAME = 'pocketplanner-cache-v9';
 const STATIC_ASSETS = [
   './',
   './dashboard.html',
@@ -24,13 +24,6 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn('Some assets could not be pre-cached:', err);
-      });
-    })
-  );
   self.skipWaiting();
 });
 
@@ -50,11 +43,12 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Do not cache dynamic API requests
+  // Do not intercept dynamic API requests
   if (event.request.url.includes('/api/')) {
     return;
   }
 
+  // Network-First strategy: always fetch live updates from server
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
@@ -69,3 +63,4 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(event.request))
   );
 });
+
