@@ -1200,3 +1200,104 @@ div[style*="position: fixed"][style*="bottom: 16px"][style*="right: 16px"] {
 }
 
 
+
+
+/* ==========================================================================
+   KPI Privacy Masking & 1-Tap Reveal Experience
+   ========================================================================== */
+.kpi-card {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.12);
+}
+
+.kpi-card:active {
+  transform: scale(0.98);
+}
+
+.kpi-privacy-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: var(--bg-body);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  opacity: 0.75;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.kpi-card:hover .kpi-privacy-indicator {
+  opacity: 1;
+  background: var(--primary-light);
+  border-color: var(--primary);
+  transform: scale(1.08);
+}
+
+.kpi-masked-val {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+  letter-spacing: 3px;
+  color: var(--text-muted) !important;
+  opacity: 0.75;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kpi-revealed-val {
+  animation: kpiRevealFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-main) !important;
+  letter-spacing: -0.03em;
+  opacity: 1;
+}
+
+@keyframes kpiRevealFade {
+  0% {
+    opacity: 0.3;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kpi-tap-hint {
+  font-size: 10px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: opacity 0.2s ease;
+}
+
+.kpi-card:hover .kpi-tap-hint {
+  opacity: 0.95;
+  color: var(--primary);
+}
+
+@media (max-width: 1024px) {
+  .kpi-privacy-indicator {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 10px !important;
+    border-radius: 5px !important;
+  }
+  .kpi-masked-val {
+    font-size: 16px !important;
+    letter-spacing: 2px !important;
+  }
+  .kpi-tap-hint {
+    font-size: 8.5px !important;
+  }
+}

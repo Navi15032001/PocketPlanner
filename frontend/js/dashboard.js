@@ -35,21 +35,126 @@ const healthDisplay = {
     NO_DATA: { face: "⚪", text: "Add opening balance and log entries.", width: 5 },
 };
 
+
+// ===============================
+// KPI PRIVACY & AMOUNT MASKING LOGIC
+// ===============================
+const KPI_CONFIG = {
+    availableMoney: { elementId: "availableMoney", eyeId: "eye_availableMoney", hintId: "hint_availableMoney" },
+    monthlyIncome: { elementId: "monthlyIncome", eyeId: "eye_monthlyIncome", hintId: "hint_monthlyIncome" },
+    totalExpenses: { elementId: "totalExpenses", eyeId: "eye_totalExpenses", hintId: "hint_totalExpenses" },
+    reservedAmount: { elementId: "reservedAmount", eyeId: "eye_reservedAmount", hintId: "hint_reservedAmount" }
+};
+
+let kpiRawValues = {
+    availableMoney: "₹0",
+    monthlyIncome: "₹0",
+    totalExpenses: "₹0",
+    reservedAmount: "₹0"
+};
+
+// Default all 4 cards to hidden (true) as requested by user
+let kpiHiddenState = {
+    availableMoney: true,
+    monthlyIncome: true,
+    totalExpenses: true,
+    reservedAmount: true
+};
+
+function initKpiPrivacy() {
+    const savedPrivacy = localStorage.getItem("pp_kpi_privacy_mode");
+    const isHidden = savedPrivacy === null ? true : savedPrivacy === "true";
+    
+    Object.keys(kpiHiddenState).forEach(key => {
+        kpiHiddenState[key] = isHidden;
+    });
+    
+    renderAllKpis();
+}
+
+function updateKpiElement(key) {
+    const cfg = KPI_CONFIG[key];
+    if (!cfg) return;
+    
+    const valEl = document.getElementById(cfg.elementId);
+    const eyeEl = document.getElementById(cfg.eyeId);
+    const hintEl = document.getElementById(cfg.hintId);
+    const isHidden = kpiHiddenState[key];
+    
+    if (valEl) {
+        if (isHidden) {
+            valEl.textContent = "••••••";
+            valEl.classList.add("kpi-masked-val");
+            valEl.classList.remove("kpi-revealed-val");
+        } else {
+            valEl.textContent = kpiRawValues[key] || "₹0";
+            valEl.classList.remove("kpi-masked-val");
+            valEl.classList.add("kpi-revealed-val");
+        }
+    }
+    
+    if (eyeEl) {
+        eyeEl.textContent = isHidden ? "🔒" : "👁️";
+    }
+    
+    if (hintEl) {
+        hintEl.textContent = isHidden ? t("Tap to reveal") : t("Tap to hide");
+    }
+}
+
+function renderAllKpis() {
+    Object.keys(KPI_CONFIG).forEach(key => {
+        updateKpiElement(key);
+    });
+    updateMasterPrivacyButton();
+}
+
+function toggleKpiPrivacy(key) {
+    if (key && kpiHiddenState.hasOwnProperty(key)) {
+        kpiHiddenState[key] = !kpiHiddenState[key];
+        updateKpiElement(key);
+        updateMasterPrivacyButton();
+    }
+}
+
+function toggleAllKpiPrivacy() {
+    const anyHidden = Object.values(kpiHiddenState).some(v => v === true);
+    const targetState = !anyHidden; // If any hidden -> reveal all (false); if all revealed -> hide all (true)
+    
+    Object.keys(kpiHiddenState).forEach(key => {
+        kpiHiddenState[key] = targetState;
+    });
+    
+    localStorage.setItem("pp_kpi_privacy_mode", targetState ? "true" : "false");
+    renderAllKpis();
+}
+
+function updateMasterPrivacyButton() {
+    const btn = document.getElementById("masterPrivacyBtn");
+    const icon = document.getElementById("masterPrivacyIcon");
+    const text = document.getElementById("masterPrivacyText");
+    if (!btn) return;
+    
+    const anyHidden = Object.values(kpiHiddenState).some(v => v === true);
+    if (anyHidden) {
+        if (icon) icon.textContent = "👁️";
+        if (text) text.textContent = t("Reveal All");
+    } else {
+        if (icon) icon.textContent = "🔒";
+        if (text) text.textContent = t("Hide All");
+    }
+}
+
 async function loadDashboard() {
     try {
         const data = await apiRequest("/dashboard/");
 
-        document.getElementById("monthlyIncome").textContent =
-            `₹${Number(data.current_balance).toLocaleString("en-IN")}`;
+        kpiRawValues.monthlyIncome = `₹${Number(data.current_balance).toLocaleString("en-IN")}`;
+        kpiRawValues.reservedAmount = `₹${Number(data.reserved_amount).toLocaleString("en-IN")}`;
+        kpiRawValues.totalExpenses = `₹${Number(data.expenses_this_month).toLocaleString("en-IN")}`;
+        kpiRawValues.availableMoney = `₹${Number(data.available_money).toLocaleString("en-IN")}`;
 
-        document.getElementById("reservedAmount").textContent =
-            `₹${Number(data.reserved_amount).toLocaleString("en-IN")}`;
-
-        document.getElementById("totalExpenses").textContent =
-            `₹${Number(data.expenses_this_month).toLocaleString("en-IN")}`;
-
-        document.getElementById("availableMoney").textContent =
-            `₹${Number(data.available_money).toLocaleString("en-IN")}`;
+        renderAllKpis();
 
         document.getElementById("budgetCount").textContent = data.budget_count;
         document.getElementById("expenseCount").textContent = data.expense_count;
@@ -534,6 +639,7 @@ async function loadRecentTransactions() {
 // STARTUP FLOW
 // ===============================
 async function initDashboardFlow() {
+    initKpiPrivacy();
     const quickForm = document.getElementById("quickLogForm");
     if (quickForm && !quickForm.hasAttribute("data-wired")) {
         quickForm.setAttribute("data-wired", "true");

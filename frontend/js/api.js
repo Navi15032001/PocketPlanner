@@ -147,6 +147,19 @@ const TRANSLATIONS = {
         "Budgets + Savings goals": "बजट और सेविंग्स गोल्स में लॉक",
         "Financial Health Score": "वित्तीय स्वास्थ्य स्कोर",
         "Budget Allocation": "बजट आवंटन",
+                "Reveal All": "सभी दिखाएं",
+        "Hide All": "सभी छुपाएं",
+        "Tap to reveal": "देखने के लिए टैप करें",
+        "Tap to hide": "छुपाने के लिए टैप करें",
+        "Privacy Mode": "प्राइवेसी मोड",
+        "Available Cash": "उपलब्ध नकद",
+        "Current Balance": "वर्तमान बैलेंस",
+        "Month Expenses": "इस महीने का खर्च",
+        "Total Reserved": "कुल आरक्षित राशि",
+        "Free unreserved balance": "खर्च हेतु उपलब्ध फ्री बैलेंस",
+        "Opening + Income - Expenses": "शुरुआती बैलेंस + कुल आय - कुल खर्च",
+        "Current month spending": "चालू माह का कुल खर्च",
+        "Budgets + Savings goals": "बजट और बचत लक्ष्यों में आरक्षित",
         "Quick Expense Fast-Log": "⚡ 2-सेकंड त्वरित खर्च दर्ज करें",
         "Log a cash outflow in 2 seconds": "2 सेकंड में तुरंत खर्च दर्ज करें",
         "Recent Transactions": "हाल के लेन-देन",
@@ -507,7 +520,7 @@ let deferredInstallPrompt = null;
 function initPWA() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('service-worker.js?v=12')
+            navigator.serviceWorker.register('service-worker.js?v=13')
                 .then(reg => {
                     reg.update();
                     console.log('PWA Service Worker registered & updated:', reg.scope);
