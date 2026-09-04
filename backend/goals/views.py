@@ -95,6 +95,30 @@ class GoalViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
+    @action(detail=True, methods=['post'], url_path='apply-past-incomes')
+    def apply_past_incomes(self, request, pk=None):
+        """
+        Explicitly triggers retroactive split from all past existing incomes into this goal.
+        """
+        goal = self.get_object()
+        if goal.auto_split_percent <= 0:
+            return Response(
+                {'detail': 'This goal does not have an active auto-split percentage.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        old_saved = goal.saved_amount
+        self._apply_auto_split_from_existing_incomes(goal)
+        goal.refresh_from_db()
+        added = goal.saved_amount - old_saved
+
+        return Response({
+            'detail': f"Successfully applied auto-split from existing incomes! +₹{added:,.2f} added.",
+            'goal_id': goal.id,
+            'saved_amount': goal.saved_amount,
+            'added_amount': added
+        }, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['post'], url_path='sync-splits')
     def sync_all_splits(self, request):
         """

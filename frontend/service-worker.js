@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pocketplanner-cache-v7';
+const CACHE_NAME = 'pocketplanner-cache-v8';
 const STATIC_ASSETS = [
   './',
   './dashboard.html',

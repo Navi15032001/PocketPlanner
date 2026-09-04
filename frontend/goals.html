@@ -179,21 +179,21 @@
                     </div>
 
                     <!-- AUTO-SPLIT SCOPE SELECTOR -->
-                    <div class="form-group mb-3" id="splitScopeGroup" style="display: none;">
-                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Split Source (स्प्लिट किस Income से करना है?)</label>
+                    <div class="form-group mb-3" id="splitScopeGroup">
+                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Split Source (स्प्लिट किस Income से काटना है?)</label>
                         <div class="d-flex flex-column gap-2 mt-1">
-                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-body); cursor: pointer;">
+                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-card); cursor: pointer;">
                                 <input type="radio" name="split_scope" value="future" checked id="splitFutureRadio">
                                 <div>
                                     <div style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">⚡ Future Incomes Only (सिर्फ आगे आने वाली नई Income से)</div>
                                     <div style="font-size: 11px; color: var(--text-muted);">Jab aage koi nayi income add karenge, sirf tabhi split hoga.</div>
                                 </div>
                             </label>
-                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-body); cursor: pointer;">
+                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-card); cursor: pointer;">
                                 <input type="radio" name="split_scope" value="all" id="splitAllRadio">
                                 <div>
-                                    <div style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">🔄 Include Past / Existing Incomes (पिछली Available Income से भी)</div>
-                                    <div style="font-size: 11px; color: var(--text-muted);">Pehle se add ki hui incomes se bhi turant % calculate karke goal me save ho jayega.</div>
+                                    <div style="font-weight: 700; font-size: 12.5px; color: var(--primary);">🔄 Include Past / Existing Incomes (पिछली Available Income से भी)</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">Pehle se add ki hui incomes se bhi turant % calculate karke goal me add ho jayega.</div>
                                 </div>
                             </label>
                         </div>
@@ -220,7 +220,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="js/api.js"></script>
-<script src="js/goals.js"></script>
+<script src="js/api.js?v=8"></script>
+<script src="js/goals.js?v=8"></script>
 </body>
 </html>

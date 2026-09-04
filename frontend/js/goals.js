@@ -59,7 +59,14 @@ async function loadGoals() {
 
                         <div class="d-flex flex-column gap-1 mb-3 pt-2 border-top" style="font-size: 12px; color: var(--text-muted);">
                             <div>📅 <strong>Deadline:</strong> ${goal.deadline || "No deadline set"}</div>
-                            <div>⚡ <strong>Auto-Split:</strong> ${autoSplit > 0 ? `<span class="pill-badge badge-amber" style="padding:1px 6px;">${autoSplit}% of income</span>` : "Disabled"}</div>
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+                                <div>⚡ <strong>Auto-Split:</strong> ${autoSplit > 0 ? `<span class="pill-badge badge-amber" style="padding:1px 6px;">${autoSplit}% of income</span>` : "Disabled"}</div>
+                                ${autoSplit > 0 ? `
+                                    <button class="btn-theme btn-secondary-theme btn-sm-theme" style="font-size: 10.5px; padding: 2px 6px; color: var(--primary); font-weight:700;" onclick="applyPastIncomesToGoal(${goal.id})" title="Split percentage from past existing incomes">
+                                        🔄 Split Past Incomes
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                     </div>
 
@@ -81,13 +88,16 @@ async function loadGoals() {
     }
 }
 
-document.getElementById("auto_split_percent")?.addEventListener("input", function () {
-    const val = parseFloat(this.value) || 0;
-    const scopeGroup = document.getElementById("splitScopeGroup");
-    if (scopeGroup) {
-        scopeGroup.style.display = val > 0 ? "block" : "none";
+async function applyPastIncomesToGoal(id) {
+    try {
+        const res = await apiRequest(`/goals/${id}/apply-past-incomes/`, { method: "POST" });
+        showToast(res.detail || "Applied auto-split from past incomes!", "success");
+        await loadGoals();
+    } catch (error) {
+        console.error("Failed to apply past incomes:", error);
+        showToast("Could not apply past incomes.", "error");
     }
-});
+}
 
 document.getElementById("goalForm").addEventListener("submit", async function (event) {
     event.preventDefault();
