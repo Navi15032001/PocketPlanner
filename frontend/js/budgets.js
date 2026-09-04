@@ -151,28 +151,36 @@ async function loadMatrix() {
             if (row.period === "DAILY") {
                 // Render 1..31 day interactive cells
                 for (let day = 1; day <= totalDays; day++) {
-                    const dayData = (row.cells && row.cells[String(day)]) || { status: 'PENDING' };
+                    const dayData = (row.cells && row.cells[String(day)]) || { status: 'PENDING', amount: row.target_amount, daily_target: row.target_amount };
                     const isToday = response.today_day === day;
+                    const targetAmt = Number(dayData.daily_target || row.target_amount);
 
                     let cellClass = "cell-pending";
-                    let icon = "-";
-                    let tooltip = `Day ${day}: Scheduled ₹${row.target_amount}`;
+                    let valHtml = `₹${targetAmt.toLocaleString("en-IN")}`;
+                    let subHtml = `<span style="color: var(--primary);">Lock</span>`;
+                    let tooltip = `Day ${day}: Decided ₹${targetAmt} (Reserved in Budget)`;
 
                     if (dayData.status === "SPENT") {
                         cellClass = "cell-spent";
-                        icon = "✓";
-                        tooltip = `Day ${day}: Spent ₹${dayData.amount || row.target_amount}`;
+                        const spentVal = Number(dayData.amount || targetAmt);
+                        valHtml = `✓ ₹${spentVal.toLocaleString("en-IN")}`;
+                        subHtml = `<span style="color: #047857;">Spent</span>`;
+                        tooltip = `Day ${day}: Spent ₹${spentVal} (Logged Expense)`;
                     } else if (dayData.status === "SKIPPED") {
                         cellClass = "cell-skipped";
-                        icon = "✕";
-                        tooltip = `Day ${day}: Skipped (Funds Freed)`;
+                        valHtml = `✕ ₹0`;
+                        subHtml = `<span style="color: var(--text-muted);">+₹${targetAmt}</span>`;
+                        tooltip = `Day ${day}: Skipped (+₹${targetAmt} freed to Available Cash)`;
                     }
 
                     rowHtml += `
                         <td class="matrix-cell ${cellClass} ${isToday ? 'cell-today' : ''}" 
                             title="${tooltip}" 
-                            onclick="openCellActionModal(${row.id}, ${day}, '${dayData.status}', ${row.target_amount})">
-                            ${icon}
+                            onclick="openCellActionModal(${row.id}, ${day}, '${dayData.status}', ${targetAmt})">
+                            <div class="cell-inner">
+                                <div class="cell-amt-text">${valHtml}</div>
+                                <div class="cell-sub-text">${subHtml}</div>
+                            </div>
                         </td>
                     `;
                 }
@@ -180,10 +188,12 @@ async function loadMatrix() {
                 // Summary Column
                 rowHtml += `
                     <td style="text-align: left; padding-left: 14px;">
-                        <div style="font-size: 11.5px;">
-                            <span style="color: var(--success-text); font-weight: 700;">🟢 ${row.spent_days_count}d Spent (₹${row.total_spent.toLocaleString("en-IN")})</span>
+                        <div style="font-size: 11px; line-height: 1.45;">
+                            <span style="color: var(--primary); font-weight: 700;">🔒 ${row.scheduled_days_count || 0}d Locked (₹${Number(row.remaining_scheduled_amount || 0).toLocaleString("en-IN")})</span>
                             <br>
-                            <span style="color: var(--danger-text); font-weight: 700;">🔘 ${row.skipped_days_count}d Skipped (₹${row.total_skipped.toLocaleString("en-IN")})</span>
+                            <span style="color: var(--success-text); font-weight: 700;">🟢 ${row.spent_days_count || 0}d Spent (₹${Number(row.total_spent || 0).toLocaleString("en-IN")})</span>
+                            <br>
+                            <span style="color: var(--text-muted); font-weight: 700;">🔘 ${row.skipped_days_count || 0}d Skipped (+₹${Number(row.total_skipped || 0).toLocaleString("en-IN")})</span>
                         </div>
                     </td>
                 `;

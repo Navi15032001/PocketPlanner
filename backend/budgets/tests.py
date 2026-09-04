@@ -40,13 +40,13 @@ class BudgetLogicTestCase(APITestCase):
             priority="MEDIUM",
             period="MONTHLY"
         )
-        # Create Low priority budget
+        # Create Low priority budget (Monthly entertainment)
         b3 = Budget.objects.create(
             user=self.user,
-            name="Daily Chai",
+            name="Weekend Movies",
             target_amount=Decimal("100.00"),
             priority="LOW",
-            period="DAILY"
+            period="MONTHLY"
         )
 
         # Allocate 10,000 balance across budgets
@@ -67,11 +67,11 @@ class BudgetLogicTestCase(APITestCase):
     def test_1_tap_spend_from_budget_drawdown(self):
         budget = Budget.objects.create(
             user=self.user,
-            name="Daily Chai & Snacks",
+            name="Office Lunch & Snacks",
             target_amount=Decimal("100.00"),
             allocated_amount=Decimal("100.00"),
             priority="HIGH",
-            period="DAILY"
+            period="MONTHLY"
         )
 
         response = self.client.post(f'/api/budgets/{budget.id}/spend/', {
