@@ -14,7 +14,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4f46e5">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/app.css?v=13">
+    <link rel="stylesheet" href="css/app.css?v=14">
 </head>
 <body>
 
@@ -108,10 +108,6 @@
                 <p class="topbar-subtitle">Here is your real-time financial health summary.</p>
             </div>
             <div class="topbar-right">
-                <button type="button" id="masterPrivacyBtn" class="btn-theme btn-secondary-theme btn-sm-theme" onclick="toggleAllKpiPrivacy()" title="Tap to reveal/hide all balances" style="display: flex; align-items: center; gap: 6px;">
-                    <span id="masterPrivacyIcon">👁️</span>
-                    <span id="masterPrivacyText">Reveal All</span>
-                </button>
                 <a href="expenses.html" class="btn-theme btn-primary-theme btn-sm-theme">+ Add Expense</a>
                 <button class="btn-icon" onclick="logout()" title="Logout">🚪</button>
             </div>
@@ -121,63 +117,47 @@
 
             <!-- KPI METRIC CARDS -->
             <div class="kpi-grid">
-                <div class="kpi-card" id="card_availableMoney" onclick="toggleKpiPrivacy('availableMoney')" style="cursor: pointer;" title="Tap to reveal / hide amount">
+                <div class="kpi-card" id="card_availableMoney" onclick="toggleKpiPrivacy('availableMoney')" style="cursor: pointer;">
                     <div class="kpi-card-header">
                         <span class="kpi-title">Available Cash</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="kpi-privacy-indicator" id="eye_availableMoney" title="Privacy Toggle">🔒</span>
-                            <div class="kpi-icon-badge badge-emerald">💰</div>
-                        </div>
+                        <div class="kpi-icon-badge badge-emerald">💰</div>
                     </div>
                     <div class="kpi-value kpi-masked-val" id="availableMoney">••••••</div>
                     <div class="kpi-footer">
                         <span>Free unreserved balance</span>
-                        <span class="kpi-tap-hint ms-auto" id="hint_availableMoney">Tap to reveal</span>
                     </div>
                 </div>
 
-                <div class="kpi-card" id="card_monthlyIncome" onclick="toggleKpiPrivacy('monthlyIncome')" style="cursor: pointer;" title="Tap to reveal / hide amount">
+                <div class="kpi-card" id="card_monthlyIncome" onclick="toggleKpiPrivacy('monthlyIncome')" style="cursor: pointer;">
                     <div class="kpi-card-header">
                         <span class="kpi-title">Current Balance</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="kpi-privacy-indicator" id="eye_monthlyIncome" title="Privacy Toggle">🔒</span>
-                            <div class="kpi-icon-badge badge-indigo">💳</div>
-                        </div>
+                        <div class="kpi-icon-badge badge-indigo">💳</div>
                     </div>
                     <div class="kpi-value kpi-masked-val" id="monthlyIncome">••••••</div>
                     <div class="kpi-footer">
                         <span>Opening + Income - Expenses</span>
-                        <span class="kpi-tap-hint ms-auto" id="hint_monthlyIncome">Tap to reveal</span>
                     </div>
                 </div>
 
-                <div class="kpi-card" id="card_totalExpenses" onclick="toggleKpiPrivacy('totalExpenses')" style="cursor: pointer;" title="Tap to reveal / hide amount">
+                <div class="kpi-card" id="card_totalExpenses" onclick="toggleKpiPrivacy('totalExpenses')" style="cursor: pointer;">
                     <div class="kpi-card-header">
                         <span class="kpi-title">Month Expenses</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="kpi-privacy-indicator" id="eye_totalExpenses" title="Privacy Toggle">🔒</span>
-                            <div class="kpi-icon-badge badge-rose">🧾</div>
-                        </div>
+                        <div class="kpi-icon-badge badge-rose">🧾</div>
                     </div>
                     <div class="kpi-value kpi-masked-val" id="totalExpenses">••••••</div>
                     <div class="kpi-footer">
                         <span>Current month spending</span>
-                        <span class="kpi-tap-hint ms-auto" id="hint_totalExpenses">Tap to reveal</span>
                     </div>
                 </div>
 
-                <div class="kpi-card" id="card_reservedAmount" onclick="toggleKpiPrivacy('reservedAmount')" style="cursor: pointer;" title="Tap to reveal / hide amount">
+                <div class="kpi-card" id="card_reservedAmount" onclick="toggleKpiPrivacy('reservedAmount')" style="cursor: pointer;">
                     <div class="kpi-card-header">
                         <span class="kpi-title">Total Reserved</span>
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="kpi-privacy-indicator" id="eye_reservedAmount" title="Privacy Toggle">🔒</span>
-                            <div class="kpi-icon-badge badge-purple">🎯</div>
-                        </div>
+                        <div class="kpi-icon-badge badge-purple">🎯</div>
                     </div>
                     <div class="kpi-value kpi-masked-val" id="reservedAmount">••••••</div>
                     <div class="kpi-footer">
                         <span>Budgets + Savings goals</span>
-                        <span class="kpi-tap-hint ms-auto" id="hint_reservedAmount">Tap to reveal</span>
                     </div>
                 </div>
             </div>
@@ -366,7 +346,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/api.js?v=13"></script>
-<script src="js/dashboard.js?v=13"></script>
+<script src="js/api.js?v=14"></script>
+<script src="js/dashboard.js?v=14"></script>
 </body>
 </html>

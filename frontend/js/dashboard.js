@@ -37,13 +37,13 @@ const healthDisplay = {
 
 
 // ===============================
-// KPI PRIVACY & AMOUNT MASKING LOGIC
+// KPI PRIVACY & 1-TAP AMOUNT MASKING LOGIC
 // ===============================
 const KPI_CONFIG = {
-    availableMoney: { elementId: "availableMoney", eyeId: "eye_availableMoney", hintId: "hint_availableMoney" },
-    monthlyIncome: { elementId: "monthlyIncome", eyeId: "eye_monthlyIncome", hintId: "hint_monthlyIncome" },
-    totalExpenses: { elementId: "totalExpenses", eyeId: "eye_totalExpenses", hintId: "hint_totalExpenses" },
-    reservedAmount: { elementId: "reservedAmount", eyeId: "eye_reservedAmount", hintId: "hint_reservedAmount" }
+    availableMoney: { elementId: "availableMoney" },
+    monthlyIncome: { elementId: "monthlyIncome" },
+    totalExpenses: { elementId: "totalExpenses" },
+    reservedAmount: { elementId: "reservedAmount" }
 };
 
 let kpiRawValues = {
@@ -77,8 +77,6 @@ function updateKpiElement(key) {
     if (!cfg) return;
     
     const valEl = document.getElementById(cfg.elementId);
-    const eyeEl = document.getElementById(cfg.eyeId);
-    const hintEl = document.getElementById(cfg.hintId);
     const isHidden = kpiHiddenState[key];
     
     if (valEl) {
@@ -92,56 +90,18 @@ function updateKpiElement(key) {
             valEl.classList.add("kpi-revealed-val");
         }
     }
-    
-    if (eyeEl) {
-        eyeEl.textContent = isHidden ? "🔒" : "👁️";
-    }
-    
-    if (hintEl) {
-        hintEl.textContent = isHidden ? t("Tap to reveal") : t("Tap to hide");
-    }
 }
 
 function renderAllKpis() {
     Object.keys(KPI_CONFIG).forEach(key => {
         updateKpiElement(key);
     });
-    updateMasterPrivacyButton();
 }
 
 function toggleKpiPrivacy(key) {
     if (key && kpiHiddenState.hasOwnProperty(key)) {
         kpiHiddenState[key] = !kpiHiddenState[key];
         updateKpiElement(key);
-        updateMasterPrivacyButton();
-    }
-}
-
-function toggleAllKpiPrivacy() {
-    const anyHidden = Object.values(kpiHiddenState).some(v => v === true);
-    const targetState = !anyHidden; // If any hidden -> reveal all (false); if all revealed -> hide all (true)
-    
-    Object.keys(kpiHiddenState).forEach(key => {
-        kpiHiddenState[key] = targetState;
-    });
-    
-    localStorage.setItem("pp_kpi_privacy_mode", targetState ? "true" : "false");
-    renderAllKpis();
-}
-
-function updateMasterPrivacyButton() {
-    const btn = document.getElementById("masterPrivacyBtn");
-    const icon = document.getElementById("masterPrivacyIcon");
-    const text = document.getElementById("masterPrivacyText");
-    if (!btn) return;
-    
-    const anyHidden = Object.values(kpiHiddenState).some(v => v === true);
-    if (anyHidden) {
-        if (icon) icon.textContent = "👁️";
-        if (text) text.textContent = t("Reveal All");
-    } else {
-        if (icon) icon.textContent = "🔒";
-        if (text) text.textContent = t("Hide All");
     }
 }
 
