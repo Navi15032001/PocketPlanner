@@ -23,11 +23,16 @@ class GoalViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         goal = serializer.save(user=self.request.user)
-        self._apply_auto_split_from_existing_incomes(goal)
+        apply_to_existing = self.request.data.get('apply_to_existing', False)
+        split_scope = self.request.data.get('split_scope', 'future')
+        if (apply_to_existing is True or str(apply_to_existing).lower() == 'true' or split_scope == 'all') and goal.auto_split_percent > 0:
+            self._apply_auto_split_from_existing_incomes(goal)
 
     def perform_update(self, serializer):
         goal = serializer.save()
-        if goal.auto_split_percent > 0:
+        apply_to_existing = self.request.data.get('apply_to_existing', False)
+        split_scope = self.request.data.get('split_scope', 'future')
+        if (apply_to_existing is True or str(apply_to_existing).lower() == 'true' or split_scope == 'all') and goal.auto_split_percent > 0:
             self._apply_auto_split_from_existing_incomes(goal)
 
     def _apply_auto_split_from_existing_incomes(self, goal):

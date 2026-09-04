@@ -163,7 +163,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Auto-Split % from new Incomes</label>
+                        <label class="form-label">Auto-Split % from Incomes</label>
                         <input
                             type="number"
                             id="auto_split_percent"
@@ -174,8 +174,29 @@
                             value="0"
                         >
                         <small class="text-muted" style="font-size: 11.5px; display: block; margin-top: 4px;">
-                            e.g. 20% means 20% of every new income entry will auto-transfer to this goal.
+                            e.g. 20% means 20% of income entries will automatically route to this goal.
                         </small>
+                    </div>
+
+                    <!-- AUTO-SPLIT SCOPE SELECTOR -->
+                    <div class="form-group mb-3" id="splitScopeGroup" style="display: none;">
+                        <label class="form-label" style="font-weight: 700; font-size: 13px;">Split Source (स्प्लिट किस Income से करना है?)</label>
+                        <div class="d-flex flex-column gap-2 mt-1">
+                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-body); cursor: pointer;">
+                                <input type="radio" name="split_scope" value="future" checked id="splitFutureRadio">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">⚡ Future Incomes Only (सिर्फ आगे आने वाली नई Income से)</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">Jab aage koi nayi income add karenge, sirf tabhi split hoga.</div>
+                                </div>
+                            </label>
+                            <label class="d-flex align-items-center gap-2 p-2 border rounded" style="background: var(--bg-body); cursor: pointer;">
+                                <input type="radio" name="split_scope" value="all" id="splitAllRadio">
+                                <div>
+                                    <div style="font-weight: 700; font-size: 12.5px; color: var(--text-main);">🔄 Include Past / Existing Incomes (पिछली Available Income से भी)</div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">Pehle se add ki hui incomes se bhi turant % calculate karke goal me save ho jayega.</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="form-group mb-4">

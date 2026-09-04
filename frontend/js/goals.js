@@ -81,15 +81,28 @@ async function loadGoals() {
     }
 }
 
+document.getElementById("auto_split_percent")?.addEventListener("input", function () {
+    const val = parseFloat(this.value) || 0;
+    const scopeGroup = document.getElementById("splitScopeGroup");
+    if (scopeGroup) {
+        scopeGroup.style.display = val > 0 ? "block" : "none";
+    }
+});
+
 document.getElementById("goalForm").addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    const autoSplitVal = parseFloat(document.getElementById("auto_split_percent").value || 0);
+    const splitScopeVal = document.querySelector('input[name="split_scope"]:checked')?.value || "future";
 
     const goalData = {
         name: document.getElementById("name").value.trim(),
         target_amount: document.getElementById("target_amount").value,
         deadline: document.getElementById("deadline").value || null,
         priority: document.getElementById("priority").value,
-        auto_split_percent: document.getElementById("auto_split_percent").value || 0,
+        auto_split_percent: autoSplitVal,
+        split_scope: splitScopeVal,
+        apply_to_existing: splitScopeVal === "all",
         description: document.getElementById("description").value
     };
 
@@ -110,6 +123,8 @@ document.getElementById("goalForm").addEventListener("submit", async function (e
 
         editingGoalId = null;
         document.getElementById("goalForm").reset();
+        const scopeGroup = document.getElementById("splitScopeGroup");
+        if (scopeGroup) scopeGroup.style.display = "none";
 
         const modal = bootstrap.Modal.getInstance(document.getElementById("goalModal"));
         if (modal) modal.hide();
@@ -143,8 +158,16 @@ async function editGoal(id) {
         document.getElementById("target_amount").value = goal.target_amount;
         document.getElementById("deadline").value = goal.deadline || "";
         document.getElementById("priority").value = goal.priority;
-        document.getElementById("auto_split_percent").value = goal.auto_split_percent || 0;
+        const autoSplit = Number(goal.auto_split_percent || 0);
+        document.getElementById("auto_split_percent").value = autoSplit;
         document.getElementById("description").value = goal.description || "";
+
+        const scopeGroup = document.getElementById("splitScopeGroup");
+        if (scopeGroup) {
+            scopeGroup.style.display = autoSplit > 0 ? "block" : "none";
+        }
+        const futureRadio = document.getElementById("splitFutureRadio");
+        if (futureRadio) futureRadio.checked = true;
 
         document.querySelector("#goalModal .modal-title").textContent = "Edit Goal";
 
@@ -160,6 +183,10 @@ document.getElementById("goalModal")?.addEventListener("show.bs.modal", function
     if (!editingGoalId) {
         document.querySelector("#goalModal .modal-title").textContent = "Set New Goal";
         document.getElementById("goalForm").reset();
+        const scopeGroup = document.getElementById("splitScopeGroup");
+        if (scopeGroup) scopeGroup.style.display = "none";
+        const futureRadio = document.getElementById("splitFutureRadio");
+        if (futureRadio) futureRadio.checked = true;
     }
 });
 
