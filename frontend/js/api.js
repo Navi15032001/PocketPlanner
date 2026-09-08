@@ -33,14 +33,34 @@ function initTheme() {
 }
 
 function applyTheme(theme) {
-    if (theme === "DARK") {
+    const isDark = (theme || "").toUpperCase() === "DARK";
+    if (isDark) {
         document.documentElement.setAttribute("data-theme", "dark");
         document.body.classList.add("dark-theme");
     } else {
         document.documentElement.removeAttribute("data-theme");
         document.body.classList.remove("dark-theme");
     }
-    localStorage.setItem("pp_theme", theme);
+    localStorage.setItem("pp_theme", isDark ? "DARK" : "LIGHT");
+
+    // Update all theme switch buttons on page
+    document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
+        btn.innerHTML = isDark ? "☀️" : "🌙";
+        btn.setAttribute("title", isDark ? "Switch to Light Theme" : "Switch to Dark Theme");
+    });
+}
+
+function toggleTheme() {
+    const current = localStorage.getItem("pp_theme") === "DARK" ? "LIGHT" : "DARK";
+    applyTheme(current);
+
+    // Save to profile in background if user is authenticated
+    if (localStorage.getItem("access_token")) {
+        apiRequest("/accounts/profile/", {
+            method: "PATCH",
+            body: JSON.stringify({ theme: current })
+        }).catch(() => {});
+    }
 }
 
 // ===============================
@@ -520,7 +540,7 @@ let deferredInstallPrompt = null;
 function initPWA() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('service-worker.js?v=14')
+            navigator.serviceWorker.register('service-worker.js?v=15')
                 .then(reg => {
                     reg.update();
                     console.log('PWA Service Worker registered & updated:', reg.scope);
@@ -596,7 +616,7 @@ function initMobileNavigation() {
         sidebarHeader.appendChild(closeBtn);
     }
 
-    // 3. Add Hamburger Button to Topbar if not present
+    // 3. Add Hamburger Button & Theme Toggle to Topbar if not present
     const topbar = document.querySelector(".app-topbar");
     if (topbar && !topbar.querySelector(".mobile-menu-btn")) {
         const menuBtn = document.createElement("button");
@@ -605,6 +625,18 @@ function initMobileNavigation() {
         menuBtn.innerHTML = "☰";
         menuBtn.onclick = () => toggleSidebar(true);
         topbar.prepend(menuBtn);
+    }
+
+    const topbarRight = topbar ? topbar.querySelector(".topbar-right") : null;
+    if (topbarRight && !topbarRight.querySelector(".theme-toggle-btn")) {
+        const isDark = localStorage.getItem("pp_theme") === "DARK";
+        const themeBtn = document.createElement("button");
+        themeBtn.type = "button";
+        themeBtn.className = "btn-icon theme-toggle-btn me-1";
+        themeBtn.innerHTML = isDark ? "☀️" : "🌙";
+        themeBtn.title = isDark ? "Switch to Light Theme" : "Switch to Dark Theme";
+        themeBtn.onclick = toggleTheme;
+        topbarRight.prepend(themeBtn);
     }
 
     // 4. Inject Native Bottom Navigation Bar
