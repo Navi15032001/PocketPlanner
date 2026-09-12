@@ -503,8 +503,11 @@ class ExportMonthlyReportPDFView(APIView):
         # -------------------------------------------------------------
         doc.build(story, canvasmaker=NumberedCanvas)
 
-        buffer.seek(0)
+        pdf_bytes = buffer.getvalue()
+        buffer.close()
+
         filename = f"PocketPlanner_Statement_{now.strftime('%Y_%m')}.pdf"
-        response = HttpResponse(buffer, content_type='application/pdf')
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        response['Content-Length'] = len(pdf_bytes)
         return response

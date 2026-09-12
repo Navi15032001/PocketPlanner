@@ -540,7 +540,7 @@ let deferredInstallPrompt = null;
 function initPWA() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('service-worker.js?v=15')
+            navigator.serviceWorker.register('service-worker.js?v=16')
                 .then(reg => {
                     reg.update();
                     console.log('PWA Service Worker registered & updated:', reg.scope);
