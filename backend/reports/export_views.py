@@ -4,6 +4,7 @@ from io import BytesIO
 
 from django.http import HttpResponse
 from django.db.models import Sum
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
@@ -119,7 +120,13 @@ class ExportMonthlyReportPDFView(APIView):
 
     def get(self, request):
         user = request.user
-        now = datetime.now()
+        try:
+            import zoneinfo
+            ist = zoneinfo.ZoneInfo("Asia/Kolkata")
+            now = timezone.now().astimezone(ist)
+        except Exception:
+            now = timezone.localtime(timezone.now())
+
         current_month_str = now.strftime("%B %Y")
         current_date_str = now.strftime("%d %b %Y, %I:%M %p")
 
