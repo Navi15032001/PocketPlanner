@@ -17,8 +17,10 @@ from accounts.models import UserProfile
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+import os
+from django.conf import settings
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, KeepTogether
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, HRFlowable, KeepTogether, Image
 )
 from reportlab.pdfgen import canvas
 
@@ -120,15 +122,21 @@ class ExportMonthlyReportPDFView(APIView):
 
     def get(self, request):
         user = request.user
+        
+        # Read exact client local timestamp and timezone from frontend request if provided
+        client_time_param = request.query_params.get('client_time')
+        client_month_param = request.query_params.get('client_month')
+        client_tz_param = request.query_params.get('tz')
+
         try:
             import zoneinfo
-            ist = zoneinfo.ZoneInfo("Asia/Kolkata")
-            now = timezone.now().astimezone(ist)
+            user_tz = zoneinfo.ZoneInfo(client_tz_param) if client_tz_param else zoneinfo.ZoneInfo("Asia/Kolkata")
+            now = timezone.now().astimezone(user_tz)
         except Exception:
             now = timezone.localtime(timezone.now())
 
-        current_month_str = now.strftime("%B %Y")
-        current_date_str = now.strftime("%d %b %Y, %I:%M %p")
+        current_month_str = client_month_param if client_month_param else now.strftime("%B %Y")
+        current_date_str = client_time_param if client_time_param else now.strftime("%d %b %Y, %I:%M %p")
 
         # -------------------------------------------------------------
         # 1. CORE FINANCIAL DATA COMPUTATIONS
@@ -277,32 +285,56 @@ class ExportMonthlyReportPDFView(APIView):
         story = []
 
         # -------------------------------------------------------------
-        # 3. HEADER & BRANDING BANNER
+        # 3. HEADER & BRANDING BANNER WITH APP LOGO
         # -------------------------------------------------------------
-        header_table_data = [
-            [
-                Paragraph("<b>Pocket<font color='#10B981'>Planner</font></b>", brand_title_style),
-                Paragraph(
-                    f"<b>Statement Period:</b> {current_month_str}<br/>"
-                    f"<b>Generated on:</b> {current_date_str}<br/>"
-                    f"<b>Report ID:</b> #PP-{now.strftime('%Y%m')}-{user.id}",
-                    header_meta_right
-                )
-            ],
-            [
-                Paragraph("Executive Monthly Financial Health & Cash Flow Statement", brand_subtitle_style),
-                Paragraph(f"<b>Account Holder:</b> {user.username} ({user.email or 'Personal User'})", header_meta_right)
-            ]
+        logo_path = os.path.join(settings.BASE_DIR, 'reports', 'icon-192.png')
+        if not os.path.exists(logo_path):
+            logo_path = os.path.join(settings.BASE_DIR.parent, 'frontend', 'icon-192.png')
+
+        logo_img = None
+        if os.path.exists(logo_path):
+            try:
+                logo_img = Image(logo_path, width=42, height=42)
+            except Exception:
+                logo_img = None
+
+        brand_account_style = ParagraphStyle(
+            'BrandAccount',
+            fontName='Helvetica',
+            fontSize=8,
+            leading=11,
+            textColor=colors.HexColor('#475569')
+        )
+
+        brand_info_flowables = [
+            Paragraph("<b>Pocket<font color='#10B981'>Planner</font></b>", brand_title_style),
+            Paragraph("Executive Monthly Financial Health & Cash Flow Statement", brand_subtitle_style),
+            Paragraph(f"<b>Account Holder:</b> {user.username} ({user.email or 'Personal User'})", brand_account_style)
         ]
 
-        header_table = Table(header_table_data, colWidths=[280, 243])
+        meta_info_flowable = Paragraph(
+            f"<b>Statement Period:</b> {current_month_str}<br/>"
+            f"<b>Generated on:</b> {current_date_str}<br/>"
+            f"<b>Report ID:</b> #PP-{now.strftime('%Y%m')}-{user.id}",
+            header_meta_right
+        )
+
+        if logo_img:
+            header_table_data = [[logo_img, brand_info_flowables, meta_info_flowable]]
+            header_table = Table(header_table_data, colWidths=[48, 242, 233])
+        else:
+            header_table_data = [[brand_info_flowables, meta_info_flowable]]
+            header_table = Table(header_table_data, colWidths=[290, 233])
+
         header_table.setStyle(TableStyle([
-            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 1),
-            ('TOPPADDING', (0, 0), (-1, -1), 1),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('LEFTPADDING', (0, 0), (-1, -1), 0),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 0),
         ]))
         story.append(header_table)
-        story.append(Spacer(1, 6))
+        story.append(Spacer(1, 8))
         story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor("#4F46E5"), spaceAfter=10))
 
         # -------------------------------------------------------------

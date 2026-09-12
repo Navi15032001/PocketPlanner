@@ -189,7 +189,30 @@ async function exportMonthlyPDF() {
         const now = new Date();
         const monthStr = `${now.getFullYear()}_${String(now.getMonth() + 1).padStart(2, "0")}`;
         const filename = `PocketPlanner_Statement_${monthStr}.pdf`;
-        await downloadFile(`/reports/export/monthly/pdf/?_t=${Date.now()}`, filename);
+
+        // Pass exact local client date/time and timezone from user's device
+        const clientTime = now.toLocaleDateString("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
+        const clientMonth = now.toLocaleDateString("en-IN", {
+            month: "long",
+            year: "numeric"
+        });
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "Asia/Kolkata";
+
+        const params = new URLSearchParams({
+            client_time: clientTime,
+            client_month: clientMonth,
+            tz: tz,
+            _t: Date.now()
+        });
+
+        await downloadFile(`/reports/export/monthly/pdf/?${params.toString()}`, filename);
     } catch (err) {
         console.error("PDF download failed:", err);
         showToast("Could not download PDF statement. Please try again.", "error");
