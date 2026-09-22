@@ -86,23 +86,11 @@ class IncomeViewSet(viewsets.ModelViewSet):
             date_str = (row.get('date') or '').strip()
             title = (row.get('title') or '').strip()
             amount_str = (row.get('amount') or '').strip()
-            income_type = (row.get('income_type') or '').strip().upper()
-            description = (row.get('description') or '').strip()
-
-            if not date_str or not amount_str or not title:
-                errors.append(f"Row {row_number}: missing date, title or amount, skipped.")
-                continue
-
-            try:
-                amount = Decimal(amount_str)
-                if amount <= 0:
-                    raise InvalidOperation
-            except InvalidOperation:
-                errors.append(f"Row {row_number}: invalid amount '{amount_str}', skipped.")
-                continue
-
-            if income_type not in VALID_INCOME_TYPES:
+            income_type = (row.get('income_type') or '').strip()
+            if not income_type:
                 income_type = 'OTHER'
+            else:
+                income_type = income_type[:50]
 
             try:
                 Income.objects.create(

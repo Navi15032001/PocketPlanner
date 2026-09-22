@@ -4,6 +4,7 @@ from .models import Income
 
 
 class IncomeSerializer(serializers.ModelSerializer):
+    income_type = serializers.CharField(max_length=50, required=False, default='OTHER', allow_blank=True)
 
     class Meta:
         model = Income

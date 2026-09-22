@@ -26,8 +26,7 @@ class Income(models.Model):
     )
 
     income_type = models.CharField(
-        max_length=20,
-        choices=INCOME_TYPE_CHOICES,
+        max_length=50,
         default='OTHER'
     )
 

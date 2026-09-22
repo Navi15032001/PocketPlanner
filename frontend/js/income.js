@@ -56,12 +56,36 @@ async function loadIncome() {
     }
 }
 
+function handleIncomeTypeChange() {
+    const typeSelect = document.getElementById("income_type");
+    const customGroup = document.getElementById("customTypeGroup");
+    const customInput = document.getElementById("custom_income_type");
+
+    if (typeSelect.value === "OTHER") {
+        customGroup.style.display = "block";
+        if (!customInput.value.trim()) {
+            customInput.focus();
+        }
+    } else {
+        customGroup.style.display = "none";
+        customInput.value = "";
+    }
+}
+
 document.getElementById("incomeForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    let selectedType = document.getElementById("income_type").value;
+    if (selectedType === "OTHER") {
+        const customVal = document.getElementById("custom_income_type").value.trim();
+        if (customVal) {
+            selectedType = customVal;
+        }
+    }
+
     const incomeData = {
         title: document.getElementById("title").value.trim(),
-        income_type: document.getElementById("income_type").value,
+        income_type: selectedType,
         amount: document.getElementById("amount").value,
         date: document.getElementById("date").value,
         description: document.getElementById("description").value
@@ -84,6 +108,8 @@ document.getElementById("incomeForm").addEventListener("submit", async function 
 
         editingIncomeId = null;
         document.getElementById("incomeForm").reset();
+        document.getElementById("customTypeGroup").style.display = "none";
+        document.getElementById("custom_income_type").value = "";
 
         const modal = bootstrap.Modal.getInstance(document.getElementById("incomeModal"));
         if (modal) modal.hide();
@@ -101,7 +127,18 @@ async function editIncome(id) {
         editingIncomeId = id;
 
         document.getElementById("title").value = income.title;
-        document.getElementById("income_type").value = income.income_type;
+        
+        const standardTypes = ["SALARY", "FREELANCE", "BUSINESS", "BONUS"];
+        if (standardTypes.includes(income.income_type)) {
+            document.getElementById("income_type").value = income.income_type;
+            document.getElementById("customTypeGroup").style.display = "none";
+            document.getElementById("custom_income_type").value = "";
+        } else {
+            document.getElementById("income_type").value = "OTHER";
+            document.getElementById("customTypeGroup").style.display = "block";
+            document.getElementById("custom_income_type").value = (income.income_type === "OTHER") ? "" : income.income_type;
+        }
+
         document.getElementById("amount").value = income.amount;
         document.getElementById("date").value = income.date;
         document.getElementById("description").value = income.description || "";
@@ -121,6 +158,8 @@ document.getElementById("incomeModal")?.addEventListener("show.bs.modal", functi
     if (!editingIncomeId) {
         document.querySelector("#incomeModal .modal-title").textContent = "Log Income";
         document.getElementById("incomeForm").reset();
+        document.getElementById("customTypeGroup").style.display = "none";
+        document.getElementById("custom_income_type").value = "";
         document.getElementById("date").value = new Date().toISOString().split("T")[0];
     }
 });
