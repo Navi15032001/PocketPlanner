@@ -6,6 +6,16 @@ if (!token) {
     window.location.href = "login.html";
 }
 
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 let editingIncomeId = null;
 
 const typeBadges = {
@@ -33,13 +43,25 @@ async function loadIncome() {
         } else {
             incomes.forEach(income => {
                 total += parseFloat(income.amount);
-                const badgeClass = typeBadges[income.income_type] || "badge-indigo";
+
+                // Determine display type name (Custom Type if Other)
+                let displayType = income.income_type || "OTHER";
+                if (displayType === "OTHER" && income.description) {
+                    const match = income.description.match(/\((.*?)\)/);
+                    if (match && match[1]) {
+                        displayType = match[1].trim();
+                    } else if (income.description.trim()) {
+                        displayType = income.description.trim();
+                    }
+                }
+
+                const badgeClass = typeBadges[displayType.toUpperCase()] || "badge-cyan";
 
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td style="font-weight:600; color:var(--text-muted);">${income.date}</td>
-                    <td style="font-weight:700;">${income.title}</td>
-                    <td><span class="pill-badge ${badgeClass}">${income.income_type}</span></td>
+                    <td style="font-weight:700;">${escapeHtml(income.title)}</td>
+                    <td><span class="pill-badge ${badgeClass}">${escapeHtml(displayType)}</span></td>
                     <td style="font-weight:800; color:var(--success); font-size:14.5px;">+₹${Number(income.amount).toLocaleString("en-IN")}</td>
                     <td style="text-align: right;">
                         <button class="btn-theme btn-secondary-theme btn-sm-theme me-1" onclick="editIncome(${income.id})">Edit</button>
@@ -160,14 +182,24 @@ async function editIncome(id) {
         document.getElementById("title").value = income.title;
         
         const standardTypes = ["SALARY", "FREELANCE", "BUSINESS", "BONUS"];
-        if (standardTypes.includes(income.income_type)) {
-            document.getElementById("income_type").value = income.income_type;
+        if (standardTypes.includes(String(income.income_type || "").toUpperCase())) {
+            document.getElementById("income_type").value = income.income_type.toUpperCase();
             document.getElementById("customTypeGroup").style.display = "none";
             document.getElementById("custom_income_type").value = "";
         } else {
             document.getElementById("income_type").value = "OTHER";
             document.getElementById("customTypeGroup").style.display = "block";
-            document.getElementById("custom_income_type").value = (income.income_type === "OTHER") ? "" : income.income_type;
+            
+            let customVal = (income.income_type && income.income_type !== "OTHER") ? income.income_type : "";
+            if (!customVal && income.description) {
+                const match = income.description.match(/\((.*?)\)/);
+                if (match && match[1]) {
+                    customVal = match[1].trim();
+                } else if (income.description.trim()) {
+                    customVal = income.description.trim();
+                }
+            }
+            document.getElementById("custom_income_type").value = customVal;
         }
 
         document.getElementById("amount").value = income.amount;
