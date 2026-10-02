@@ -4,14 +4,6 @@ from django.contrib.auth.models import User
 
 class Income(models.Model):
 
-    INCOME_TYPE_CHOICES = [
-        ('SALARY', 'Salary'),
-        ('FREELANCE', 'Freelance'),
-        ('BUSINESS', 'Business'),
-        ('BONUS', 'Bonus'),
-        ('OTHER', 'Other'),
-    ]
-
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

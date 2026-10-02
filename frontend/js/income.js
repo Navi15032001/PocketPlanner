@@ -117,7 +117,7 @@ document.getElementById("incomeForm").addEventListener("submit", async function 
         await loadIncome();
     } catch (error) {
         console.error("Failed to save income:", error);
-        showToast("Could not save income record. Please check inputs.", "error");
+        showToast(error.message || "Could not save income record. Please check inputs.", "error");
     }
 });
 

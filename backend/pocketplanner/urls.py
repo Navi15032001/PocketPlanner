@@ -6,7 +6,18 @@ from reports.export_views import (
     ExportMonthlyReportPDFView,
 )
 
+from django.http import JsonResponse
+
+def health_check(request):
+    return JsonResponse({
+        "status": "ok",
+        "version": "v18.1",
+        "custom_income_support": True
+    })
+
 urlpatterns = [
+    path('api/health/', health_check),
+    path('api/version/', health_check),
     path('admin/', admin.site.urls),
     path('api/accounts/', include('accounts.urls')),
     path('api/categories/', include('categories.urls')),
