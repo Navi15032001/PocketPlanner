@@ -76,8 +76,9 @@ document.getElementById("incomeForm").addEventListener("submit", async function 
     event.preventDefault();
 
     let selectedType = document.getElementById("income_type").value;
+    let customVal = "";
     if (selectedType === "OTHER") {
-        const customVal = document.getElementById("custom_income_type").value.trim();
+        customVal = document.getElementById("custom_income_type").value.trim();
         if (customVal) {
             selectedType = customVal;
         }
@@ -93,16 +94,46 @@ document.getElementById("incomeForm").addEventListener("submit", async function 
 
     try {
         if (editingIncomeId) {
-            await apiRequest(`/income/${editingIncomeId}/`, {
-                method: "PUT",
-                body: JSON.stringify(incomeData)
-            });
+            try {
+                await apiRequest(`/income/${editingIncomeId}/`, {
+                    method: "PUT",
+                    body: JSON.stringify(incomeData)
+                });
+            } catch (err) {
+                if (err.message && err.message.includes("not a valid choice") && selectedType !== "OTHER") {
+                    incomeData.income_type = "OTHER";
+                    if (customVal && !incomeData.description.includes(customVal)) {
+                        incomeData.description = incomeData.description ? `${incomeData.description} (${customVal})` : customVal;
+                    }
+                    await apiRequest(`/income/${editingIncomeId}/`, {
+                        method: "PUT",
+                        body: JSON.stringify(incomeData)
+                    });
+                } else {
+                    throw err;
+                }
+            }
             showToast("Income record updated!", "success");
         } else {
-            await apiRequest("/income/", {
-                method: "POST",
-                body: JSON.stringify(incomeData)
-            });
+            try {
+                await apiRequest("/income/", {
+                    method: "POST",
+                    body: JSON.stringify(incomeData)
+                });
+            } catch (err) {
+                if (err.message && err.message.includes("not a valid choice") && selectedType !== "OTHER") {
+                    incomeData.income_type = "OTHER";
+                    if (customVal && !incomeData.description.includes(customVal)) {
+                        incomeData.description = incomeData.description ? `${incomeData.description} (${customVal})` : customVal;
+                    }
+                    await apiRequest("/income/", {
+                        method: "POST",
+                        body: JSON.stringify(incomeData)
+                    });
+                } else {
+                    throw err;
+                }
+            }
             showToast("Income logged & Goal auto-splits processed!", "success");
         }
 
