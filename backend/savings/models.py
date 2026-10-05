@@ -33,5 +33,8 @@ class Saving(models.Model):
         auto_now_add=True
     )
 
+    class Meta:
+        ordering = ['-date', '-created_at']
+
     def __str__(self):
         return f"{self.amount} - {self.goal.name}"

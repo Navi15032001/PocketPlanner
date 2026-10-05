@@ -37,6 +37,8 @@ async function loadSavings() {
     try {
         const response = await apiRequest("/savings/");
         const savings = Array.isArray(response) ? response : response.results || [];
+        // Ensure date-wise descending sorting
+        savings.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
 
         const tableBody = document.getElementById("savingTableBody");
         tableBody.innerHTML = "";

@@ -565,6 +565,8 @@ async function loadRecentTransactions() {
     try {
         const response = await apiRequest("/expenses/");
         const expenses = Array.isArray(response) ? response : response.results || [];
+        // Ensure date-wise descending sorting
+        expenses.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
 
         const list = document.getElementById("recentTransactions");
         if (!list) return;

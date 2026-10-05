@@ -30,6 +30,8 @@ async function loadIncome() {
     try {
         const response = await apiRequest("/income/");
         const incomes = Array.isArray(response) ? response : response.results || [];
+        // Ensure date-wise descending sorting
+        incomes.sort((a, b) => new Date(b.date) - new Date(a.date) || b.id - a.id);
 
         const tableBody = document.getElementById("incomeTableBody");
         tableBody.innerHTML = "";

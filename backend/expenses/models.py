@@ -38,5 +38,8 @@ class Expense(models.Model):
         auto_now=True
     )
 
+    class Meta:
+        ordering = ['-date', '-created_at']
+
     def __str__(self):
         return f"{self.user.username} - {self.amount}"
