@@ -46,3 +46,30 @@ class IncomeAndGoalSplitTestCase(APITestCase):
         savings = Saving.objects.filter(user=self.user, goal=self.goal)
         self.assertEqual(savings.count(), 1)
         self.assertEqual(savings.first().amount, Decimal('2000.00'))
+
+    def test_income_delete_cleans_up_goal_splits(self):
+        self.client.force_authenticate(user=self.user)
+        # Create income
+        response = self.client.post('/api/income/', {
+            'title': 'Salary Bonus',
+            'income_type': 'BONUS',
+            'amount': '10000.00',
+            'date': '2026-08-16',
+            'description': 'Bonus paycheck'
+        })
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        income_id = response.data['id']
+
+        self.goal.refresh_from_db()
+        self.assertEqual(self.goal.saved_amount, Decimal('2000.00'))
+        self.assertEqual(Saving.objects.filter(user=self.user, goal=self.goal).count(), 1)
+
+        # Delete income via API
+        del_response = self.client.delete(f'/api/income/{income_id}/')
+        self.assertEqual(del_response.status_code, status.HTTP_204_NO_CONTENT)
+
+        # Check split savings deleted and goal saved_amount deducted
+        self.goal.refresh_from_db()
+        self.assertEqual(self.goal.saved_amount, Decimal('0.00'))
+        self.assertEqual(self.goal.status, 'ACTIVE')
+        self.assertEqual(Saving.objects.filter(user=self.user, goal=self.goal).count(), 0)

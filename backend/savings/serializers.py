@@ -10,6 +10,7 @@ class SavingSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'goal',
+            'income',
             'amount',
             'date',
             'description',
@@ -18,6 +19,7 @@ class SavingSerializer(serializers.ModelSerializer):
 
         read_only_fields = [
             'id',
+            'income',
             'created_at',
         ]
 

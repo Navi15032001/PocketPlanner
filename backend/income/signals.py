@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
 from .models import Income
@@ -44,6 +44,7 @@ def auto_split_income_into_goals(sender, instance, created, **kwargs):
             Saving.objects.create(
                 user=instance.user,
                 goal=goal,
+                income=instance,
                 amount=split_amount,
                 date=instance.date,
                 description=f"Auto-split ({goal.auto_split_percent}%) from income: {instance.title}"
@@ -56,3 +57,36 @@ def auto_split_income_into_goals(sender, instance, created, **kwargs):
                 goal.status = 'COMPLETED'
 
             goal.save(update_fields=['saved_amount', 'status'])
+
+
+@receiver(pre_delete, sender=Income)
+def cleanup_split_savings_on_income_delete(sender, instance, **kwargs):
+    """
+    Whenever an Income entry is deleted, automatically delete all split savings
+    associated with it (both via foreign key and legacy description matching),
+    and deduct the saved amounts from the respective goals, restoring goal
+    status back to ACTIVE if no longer completed.
+    """
+    from savings.models import Saving
+
+    # 1. Savings linked directly via foreign key
+    fk_savings = list(instance.split_savings.select_related('goal').all()) if hasattr(instance, 'split_savings') else []
+
+    # 2. Legacy savings linked by matching description, date, and user
+    legacy_savings = list(Saving.objects.filter(
+        user=instance.user,
+        date=instance.date,
+        description__icontains=f"from income: {instance.title}"
+    ).select_related('goal'))
+
+    all_savings = {s.id: s for s in (fk_savings + legacy_savings)}.values()
+
+    with transaction.atomic():
+        for saving in all_savings:
+            goal = saving.goal
+            if goal:
+                goal.saved_amount = max(Decimal('0.00'), goal.saved_amount - saving.amount)
+                if goal.saved_amount < goal.target_amount:
+                    goal.status = 'ACTIVE'
+                goal.save(update_fields=['saved_amount', 'status'])
+            saving.delete()
