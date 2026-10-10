@@ -233,8 +233,37 @@ async function deleteIncome(id) {
     if (!confirm("Are you sure you want to delete this income record?")) return;
 
     try {
+        // Fetch details of this income to guarantee any connected goal splits are deleted
+        let incomeDetails = null;
+        try {
+            incomeDetails = await apiRequest(`/income/${id}/`);
+        } catch (e) {}
+
+        if (incomeDetails) {
+            try {
+                const savingsRes = await apiRequest("/savings/");
+                const savings = Array.isArray(savingsRes) ? savingsRes : savingsRes.results || [];
+                const splitSavings = savings.filter(s => {
+                    if (s.income && Number(s.income) === Number(id)) return true;
+                    if (s.date === incomeDetails.date && s.description && (
+                        s.description.includes(incomeDetails.title) ||
+                        (incomeDetails.description && s.description.includes(incomeDetails.description))
+                    )) return true;
+                    return false;
+                });
+
+                for (const s of splitSavings) {
+                    try {
+                        await apiRequest(`/savings/${s.id}/`, { method: "DELETE" });
+                    } catch (err) {}
+                }
+            } catch (err) {
+                console.warn("Savings cleanup notice:", err);
+            }
+        }
+
         await apiRequest(`/income/${id}/`, { method: "DELETE" });
-        showToast("Income record deleted.", "info");
+        showToast("Income & connected goal splits deleted.", "info");
         await loadIncome();
     } catch (error) {
         console.error("Failed to delete income:", error);

@@ -1,1 +1,1 @@
-web: gunicorn pocketplanner.wsgi:application --bind 0.0.0.0:$PORT
+web: python manage.py migrate --noinput && gunicorn pocketplanner.wsgi:application --bind 0.0.0.0:$PORT
